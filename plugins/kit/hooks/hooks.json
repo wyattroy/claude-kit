@@ -1,0 +1,29 @@
+{
+  "description": "The mentor charter, enforced by the harness rather than by good intentions. On 2026-08-24 the charter was loaded in context, in full, and the Mentor note was skipped anyway: a work request went straight to a `git fetch` with no note at all. A PROMPT YOU ARE HOLDING IS A PROMPT YOU CAN SKIP. So the charter no longer relies on being read. The per-message hook is the one that matters — the failure is per-message, not per-session, and a session-start greeting fires once and cannot stop turn 40 from skipping the note. If only one of these survives a future cleanup, keep UserPromptSubmit.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/mentor-session-start.sh\"",
+            "timeout": 10,
+            "statusMessage": "the first reply opens as Wyatt's mentor"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/mentor-prompt.sh\"",
+            "timeout": 10,
+            "statusMessage": "coach the framing, then grade it"
+          }
+        ]
+      }
+    ]
+  }
+}

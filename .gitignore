@@ -1,0 +1,4 @@
+# The board is GENERATED from .claude/scorecard.jsonl on every run, and published as an Artifact.
+# Committing it would put a second copy of the same numbers under version control, guaranteed to
+# disagree with the ledger the moment anyone grades without regenerating.
+.claude/scorecard.html

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-kit",
+  "description": "Wyatt's personal Claude Code kit — a mentor that coaches and grades how he asks, and a critic that judges and grades what came back.",
+  "owner": {
+    "name": "Wyatt Roy",
+    "email": "wyatty@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "kit",
+      "description": "Two operators, both measured. /mentor coaches the framing of a request before the work runs and grades the ask (framing, leverage, learnings). /critic judges in fresh context whether the thing he ASKED for actually happened and grades the delivery (delivery, evidence, scope). /scorecard publishes the board that shows both, with XP, levels, streaks and badges. Repo specifics live in .claude/KIT.md; anything missing is named out loud, never silently skipped.",
+      "author": { "name": "Wyatt Roy" },
+      "category": "workflow",
+      "source": "./plugins/kit"
+    }
+  ]
+}

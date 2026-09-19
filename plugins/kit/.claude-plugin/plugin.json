@@ -1,0 +1,7 @@
+{
+  "name": "kit",
+  "version": "3.0.0",
+  "description": "Wyatt's Claude Code kit, and only what he actually uses. The MENTOR coaches how he framed each request before the work runs, then grades the ask — framing, leverage, learnings applied. The CRITIC judges, in fresh context and its own words, whether the thing he ASKED for actually happened, then grades the delivery — did it happen, was there evidence, did it stay in scope. Both write to one append-only ledger per repo, and the SCORECARD renders it as a published board where the human prompter and the model are scored side by side.",
+  "author": { "name": "Wyatt Roy", "email": "wyatty@gmail.com" },
+  "keywords": ["mentor", "coaching", "review", "verification", "scorecard", "gamification", "prompting"]
+}

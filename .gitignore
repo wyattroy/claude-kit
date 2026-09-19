@@ -2,3 +2,8 @@
 # Committing it would put a second copy of the same numbers under version control, guaranteed to
 # disagree with the ledger the moment anyone grades without regenerating.
 .claude/scorecard.html
+
+# Per-machine hook state: when the last prompt arrived and how many turns went ungraded. It is the
+# skipped-grade check's memory, it differs on every machine, and committing it would make one
+# machine's count everyone's.
+.claude/.mentor-turn

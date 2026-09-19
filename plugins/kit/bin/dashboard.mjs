@@ -108,7 +108,8 @@ function panel(side) {
       <span class="bi" aria-hidden="true">${b.icon}</span><span class="bn">${esc(b.name)}</span>
       <span class="bw">${esc(b.what)}</span></li>`).join("");
 
-  const trend = d.trend === null ? `<span class="trend flat">first five rounds</span>`
+  const trend = d.trend === null
+    ? `<span class="trend flat">no trend yet — a direction needs six rounds</span>`
     : `<span class="trend ${d.trend > 0 ? "up" : d.trend < 0 ? "down" : "flat"}">${d.trend > 0 ? "▲" : d.trend < 0 ? "▼" : "▬"} ${Math.abs(d.trend)} vs previous five</span>`;
 
   return `<section class="op ${side}">
@@ -174,6 +175,13 @@ function blind() {
   if (!S.exists) lines.push(`There is no ledger at <code>${esc(path.relative(REPO, S.file))}</code>. <strong>Nothing in this repo has ever been graded</strong> — every figure on this page is absent, not zero.`);
   for (const side of SIDES) if (S.exists && !S.sides[side].rounds)
     lines.push(`<strong>${esc(RUBRIC[side].label)} has no grades.</strong> The ${esc(RUBRIC[side].graded_by)} has never written to this ledger, so the head-to-head cannot be drawn and half this board is unknown.`);
+  /* THE SKIPPED-GRADE COUNTER, read from the same file the prompt hook writes. This is where the
+     one check that can fail comes to land: a mentor that stops grading is now visible HERE, on the
+     board, rather than only in a hook nobody reads. */
+  try {
+    const st = JSON.parse(fs.readFileSync(path.join(REPO, ".claude", ".mentor-turn"), "utf8"));
+    if (st.skipped > 0) lines.push(`<strong>${st.skipped} user turn${st.skipped === 1 ? "" : "s"} went ungraded.</strong> The mentor hook saw a prompt and no grade followed it. Some of those were trivial messages, which are supposed to go ungraded — but the count is not zero, so this board is a sample of the work, not all of it.`);
+  } catch { /* no counter yet: the hook has never run here, which is not a finding about the data */ }
   const unpaired = S.entries.filter(e => e.round === "unpaired").length;
   if (unpaired) lines.push(`${unpaired} grade${unpaired === 1 ? " was" : "s were"} filed as <code>unpaired</code> — recorded, but not attached to the ask that produced ${unpaired === 1 ? "it" : "them"}, so ${unpaired === 1 ? "it does" : "they do"} not appear in the gap column.`);
   for (const b of S.broken) lines.push(`Ledger line ${b.line} could not be read (<code>${esc(b.why)}</code>) and is <strong>not counted anywhere on this page</strong>.`);
@@ -245,7 +253,7 @@ q{quotes:"\\201C" "\\201D"}
 .lede strong{color:var(--ink)}
 
 /* operator panels */
-.board{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:30px}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:30px;align-items:start}
 @media (max-width:760px){.board{grid-template-columns:1fr}}
 .op{background:var(--surface);border-radius:4px;box-shadow:var(--shadow);padding:20px 20px 24px;
   border-top:4px solid var(--accent)}
@@ -338,7 +346,10 @@ q{quotes:"\\201C" "\\201D"}
 .plotwrap{position:relative}
 
 /* log */
-.log{width:100%;border-collapse:collapse;font-size:13.5px}
+/* A table allowed to shrink to phone width does not stay readable — it crushes the ask
+   column to one word per line. Tables are the documented exception to the no-sideways-scroll
+   rule: give it a floor and let .tablescroll carry it. */
+.log{width:100%;min-width:600px;border-collapse:collapse;font-size:13.5px}
 .log caption{text-align:left;font-size:12.5px;color:var(--ink3);margin-bottom:10px;caption-side:top}
 .log .gapkey{display:block;margin-top:3px}
 .log th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;

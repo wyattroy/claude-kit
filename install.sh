@@ -103,6 +103,17 @@ STAMP
   # editing a repo's settings file from an installer in another repo is not this script's business.
   echo "Wire the mentor hooks in $REPO/.claude/settings.json (SessionStart + UserPromptSubmit ->"
   echo ".claude/kit/hooks/*.sh) — a vendored copy carries no plugin manifest to do it for you."
+  # THE COLLISION, NAMED WHERE IT IS CREATED. A Critic flagged this in August and it is still open;
+  # a second Critic, 2026-09-19, found it had got WIDER — three skills now, not one. Vendoring
+  # writes .claude/skills/{critic,mentor,scorecard}/SKILL.md, and on a machine that ALSO has the
+  # plugin installed there are two copies of each and nothing documented decides which wins.
+  # It is harmless in the place vendoring is FOR — a cloud container, where no plugin exists — and
+  # unresolved everywhere else. Saying so on every vendor beats a note in a file nobody opens.
+  echo
+  echo "⚠ KNOWN, OPEN: this just wrote .claude/skills/{critic,mentor,scorecard}/SKILL.md into the"
+  echo "  repo. If you ALSO have kit@claude-kit installed as a plugin on this machine, each of those"
+  echo "  three now exists twice and nothing decides which wins. Harmless in a cloud container (no"
+  echo "  plugin there) — unverified on a laptop that has both. Check before relying on it."
   exit 0
 fi
 
@@ -142,7 +153,8 @@ EVERYTHING SHIPS AS ONE PLUGIN. In Claude Code:
     /plugin install kit@claude-kit
 
 That carries the mentor, the critic, the scorecard, the engines AND the two mentor hooks —
-nothing to add to settings.json by hand.
+nothing to add to settings.json by hand. THAT IS TRUE OF THE PLUGIN ONLY: a vendored copy has no
+plugin manifest, so `vendor` tells you to wire its two hooks yourself.
 
 For a repo whose kit must also work in CLOUD sessions, where ~/.claude does not exist:
     bash install.sh vendor /path/to/repo

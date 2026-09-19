@@ -43,6 +43,12 @@
   For a repo that needs the kit there: `bash install.sh vendor /path/to/repo`, then wire the two
   hooks in that repo's own `.claude/settings.json` — a vendored copy carries no plugin manifest to
   do it for itself. `bash install.sh check /path/to/repo` says whether the copy has drifted.
+- **OPEN, and flagged twice now by the critic: vendoring collides with the plugin.**
+  `vendor` writes `.claude/skills/{critic,mentor,scorecard}/SKILL.md` into the repo while the plugin
+  ships its own copy of each. On a machine with both, each skill exists twice and **nothing
+  documented decides which wins.** It is harmless where vendoring is for — a cloud container has no
+  plugin — and unverified on a laptop that has both. `install.sh vendor` now says so every time it
+  runs. Do not rely on it until someone has actually checked.
 - **The ledger is per-repo.** There is no lifetime cross-project score; each repo keeps its own.
   That is the trade for grades that survive into cloud containers.
 - **The board is a snapshot, not a live view.** `dashboard.mjs` bakes the data into the page, so a

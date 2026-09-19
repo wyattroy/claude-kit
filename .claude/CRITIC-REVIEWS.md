@@ -13,6 +13,59 @@ about the reviewer and belongs on the record exactly as it was written.
 
 ---
 
+## Review 2 — 2026-09-19 · `b19f52d`, the Critic rename, the purge and the scorecard
+**Asked, verbatim:** *"Rename CEO to critic / Repackage Claude Kit to remove all trash... / Make
+mentors give a score for how well you asked your prompt... / Create a gamified dashboard..."*
+
+**Verdict: PARTIAL.** First review under the new name, and the first to grade the delivery as a
+number: **delivery 65 · evidence 82 · scope 72 → 72/100** (the weighted total is computed by `score.mjs`, not by hand — 0.5·65 + 0.3·82 + 0.2·72).
+
+**Its sentence, in its words:**
+> *"You asked for a scoreboard and got a scoring machine that has graded exactly one thing, by hand,
+> about itself — everything measurable was measured honestly, and the one unmeasured claim is the
+> only one that decides whether any of it works: nobody has ever installed this and watched the
+> mentor grade a single real prompt."*
+
+### Per item
+
+| asked for | verdict | what it checked |
+|---|---|---|
+| Rename CEO → Critic | **DONE** | grepped every surviving file for `ceo`/`officers`/`cto`/`wyclau`/`pastry`/`team-*`; nine hits, all deliberate (the removals table, the back-compat fallback, the rename notes, one quoted line of Wyatt's kept as history). "No stray wiring, no half-renamed path." |
+| Remove the baggage | **DONE** | ran `vendor` into a scratch repo (13 files hashed), `check` → IN STEP; edited a vendored file → DRIFTED, exit 1; deleted one → caught too. "Word for word what was claimed." |
+| Mentor gives a tracked score | **PARTIAL** | weights in `ledger.mjs` match all four documents exactly; all four guards refused bad input with exit 2; out-of-range clamped; two corrupt ledger lines named by line number. **But the mentor has never graded anything** — the one entry was typed by the session that wrote the grader. |
+| Gamified dashboard | **PARTIAL** | figures confirmed baked into the HTML before any script runs; it fed the empty Claude side in a scratch copy and the head-to-head worked. **But the chosen deliverable — a published board with a link — did not exist.** "A gamified dashboard nobody can open is a rendering function." |
+
+### The recurrence catch, which is the point of the mechanism
+
+It named the August fault — *a check that looks like vigilance and cannot fail* — **recurring in new
+clothing**, and located it precisely: the whole enforcement for "grade every ask" was a hook
+injecting text, with nothing anywhere that notices when the grade never arrives. It also caught the
+irony, which is the part worth keeping:
+
+> *"The author diagnosed this exact disease one layer up — `hooks.json` says 'A PROMPT YOU ARE
+> HOLDING IS A PROMPT YOU CAN SKIP' — and then built the fix out of another prompt."*
+
+It credited the reporting layer for failing loudly (the board announces the ungraded side), which is
+why this was a partial recurrence rather than a clean one.
+
+It also found the two findings Review 1 left **OPEN** still open three weeks later, and one of them
+**wider**: vendoring now writes three skills beside the plugin's three, not one beside one.
+
+### Fixed after the verdict, in the same session
+
+The grade above stands as written against `b19f52d` — it is not re-scored for work done after it.
+
+| finding | what was done |
+|---|---|
+| No published board, no `.claude/scorecard.url` | Published; URL recorded and tracked in git. |
+| "Palette was validated" rested on the author's word | `plugins/kit/PALETTE.md` now carries the validator's actual output for both modes. |
+| "Nothing wired into settings.json" overstated | Qualified in `install.sh` and `SETUP.md`: true of the plugin, false of a vendored copy. |
+| **The recurrence** — nothing notices a skipped grade | `bin/mentor_context.mjs` records each prompt and reports when the turn that followed produced no grade, with a running count the **board prints** under "What this could not see". Proved by making it fire: silent with no ledger, fires on an ungraded turn, quiet again once a grade is written. |
+| The skill collision, wider | Not fixed — **still open**, and now said out loud on every `vendor` run and recorded in `SETUP.md`. |
+| Nobody has installed this | **Not fixable here.** It needs Wyatt's laptop and a real session. It is the top item. |
+
+---
+
 ## Review 1 — 2026-08-27 · `4e2a14e`, the officers plugin
 **Asked, verbatim:** *"i want ceo and cto to be runnable skills across my repos. how do you make
 that happen?"*

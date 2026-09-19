@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+/* mentor_context.mjs — what the mentor hooks inject, and the one check that can actually fail.
+ *
+ * THE FINDING THIS ANSWERS, Critic review 2, 2026-09-19:
+ *
+ *   "The entire enforcement for 'the mentor grades every ask' is one file that injects text telling
+ *    Claude to write a grade. If Claude ignores it, NOTHING ANYWHERE NOTICES... That is precisely
+ *    the old pattern: a mechanism that looks armed and cannot fire. The author diagnosed this exact
+ *    disease one layer up — hooks.json says 'A PROMPT YOU ARE HOLDING IS A PROMPT YOU CAN SKIP' —
+ *    and then built the fix out of another prompt."
+ *
+ * It was right, and a third prompt would not fix it. So this one LOOKS.
+ *
+ * On every user prompt it records the moment, and on the next prompt it asks whether any human-side
+ * grade was written in between. If none was, it says so — with a running count of how many turns
+ * have gone ungraded, and the dashboard reads the same file and prints the same count in its
+ * blind-spot block. That is still not enforcement: nothing can stop a model from ignoring it. But
+ * it is a CHECK THAT FAILS WHEN THE THING FAILS, and the failure ends up somewhere Wyatt looks,
+ * which is the whole difference between a guard and a decoration.
+ *
+ * A skipped grade is not automatically wrong — a trivial message ("yes", "ship it") is supposed to
+ * go ungraded. So this REPORTS rather than accuses, and asks for the one-line reason.
+ *
+ *   node mentor_context.mjs [session-start]
+ *
+ * Always exits 0 and always prints one valid hook JSON object. A mentor that breaks the session it
+ * is coaching has done more harm than the note was worth.
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
+
+const FIRST_TURN = process.argv[2] === "session-start";
+
+function repo() {
+  if (process.env.CLAUDE_PROJECT_DIR) return process.env.CLAUDE_PROJECT_DIR;
+  try {
+    return execSync("git rev-parse --show-toplevel", { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch { return process.cwd(); }
+}
+
+/** The state the check runs on: when the last prompt arrived, and how many have gone ungraded.
+ *  Read the ledger's newest human grade; if it is older than the last prompt, that prompt's turn
+ *  produced nothing. Every failure mode here degrades to "say nothing extra", never to a crash. */
+function watch() {
+  const R = repo();
+  const stateFile = path.join(R, ".claude", ".mentor-turn");
+  const ledgerFile = path.join(R, ".claude", "scorecard.jsonl");
+  const now = new Date().toISOString();
+  let prev = null, skipped = 0;
+  try { const s = JSON.parse(fs.readFileSync(stateFile, "utf8")); prev = s.last || null; skipped = s.skipped || 0; }
+  catch { /* no state yet, or unreadable — treat as a first turn rather than as a finding */ }
+
+  let newestGrade = null;
+  try {
+    for (const line of fs.readFileSync(ledgerFile, "utf8").split("\n")) {
+      if (!line.trim()) continue;
+      try { const e = JSON.parse(line); if (e.side === "human" && (!newestGrade || e.ts > newestGrade)) newestGrade = e.ts; }
+      catch { /* a malformed line is the ledger's problem; score.mjs and the board both name it */ }
+    }
+  } catch { /* no ledger in this repo — nothing is being tracked here, so nothing was skipped */ }
+
+  /* The previous turn is only judged when there WAS one and a ledger exists to judge it against. */
+  const ledgerExists = fs.existsSync(ledgerFile);
+  const missed = Boolean(prev && ledgerExists && (!newestGrade || newestGrade <= prev));
+  if (missed) skipped += 1;
+
+  try {
+    fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+    fs.writeFileSync(stateFile, JSON.stringify({ last: now, skipped, updated: now }) + "\n");
+  } catch { /* an unwritable state file costs the check, not the session */ }
+
+  return { missed, skipped, ledgerExists, newestGrade };
+}
+
+const BEATS = [
+  "1. One line restating what you understood him to be asking.",
+  "2. If the framing will cost rounds — vague scope, missing context he could have given, a task",
+  "   that should be split, backgrounded, or planned first — say so plainly and QUOTE the sharper",
+  "   message he could have sent, so he learns the pattern.",
+  "3. If the framing was already good, name in a few words what made it work — or skip the note.",
+  "   Silence is fine; filler praise is not.",
+];
+
+const GRADE = [
+  "THEN GRADE THE ASK into this repo's ledger, in the SAME turn — a grade deferred to the end of",
+  "the work is a grade written by someone who now knows what he meant:",
+  '  node "$CLAUDE_PLUGIN_ROOT/bin/score.mjs" mentor --ask="<his exact words>" \\',
+  '       --framing=N --leverage=N --learning=N --note="<the one thing that would raise it>"',
+  "Framing 40% / Leverage 30% (work the ask SAVED) / Learnings 30% (what it applied). 0-100 each,",
+  "teacher-strict: 70 competent, 85 good, 95+ rare. Keep the round id it prints — the critic",
+  "attaches the delivery grade to it. Full rubric: the `mentor` skill.",
+];
+
+let lines;
+if (FIRST_TURN) {
+  lines = [
+    "## mentor — FIRST TURN OF THIS SESSION",
+    "",
+    "The standing mentor is loaded (claude-kit). This is turn 1.",
+    "",
+    "Your first reply opens as Wyatt's mentor: say hi in ONE line, in your own voice, then go",
+    "straight into coaching the framing of the prompt he just sent, then do the work.",
+    "",
+    "Do NOT print a standalone greeting block, a recap of the charter, or a list of what you can",
+    "do. He is already asking you something. Greet him inside the answer to that.",
+    "",
+    "If this repo has a ledger (.claude/scorecard.jsonl), read the last few grades before you write",
+    "one — the Learnings dimension asks what he applied from earlier rounds, and that cannot be",
+    "judged by a grader who has not read them.",
+  ];
+} else {
+  const w = watch();
+  lines = ["## mentor — active", "",
+    "Treat this as a work request unless it is trivial (\"yes\", \"ship it\", a question back).",
+    "If it is a work request, OPEN your reply with a Mentor note — 2-4 lines, BEFORE any tool",
+    "call and before any work. Going straight to a tool call IS the failure this hook exists for.",
+    "", ...BEATS, "", ...GRADE, "",
+    "One coaching beat. Coach the FRAMING, not the taste. Never a lecture, never a list of tips."];
+
+  if (w.missed) {
+    lines.push("",
+      `⚠ THE PREVIOUS TURN PRODUCED NO GRADE. ${w.skipped} turn${w.skipped === 1 ? " has" : "s have"} gone ungraded in this repo.`,
+      "This is correct ONLY if that message was trivial. If it was a work request, say so in one line",
+      "and grade it now with the round it belonged to — do not let it disappear. The board reads the",
+      "same counter and prints it under 'What this could not see', so this does not stay between us.");
+  }
+}
+
+process.stdout.write(JSON.stringify({
+  hookSpecificOutput: {
+    hookEventName: FIRST_TURN ? "SessionStart" : "UserPromptSubmit",
+    additionalContext: lines.join("\n"),
+    mentor: FIRST_TURN ? "first-turn" : "active",
+  },
+}));

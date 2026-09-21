@@ -11,7 +11,7 @@
  * here, on read. A derived value written to disk is a value that can disagree with the data it
  * came from, and nothing on screen would say which one is lying.
  *
- * PER-REPO, BY RULING (Wyatt, 2026-09-19). The ledger is `.claude/scorecard.jsonl` inside each
+ * PER-REPO, BY RULING (2026-09-19). The ledger is `.claude/scorecard.jsonl` inside each
  * repo, not a global file in ~/.claude. It travels with the checkout, so a cloud session — which
  * sees none of ~/.claude — grades into the same record a laptop session does.
  */
@@ -19,6 +19,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { loadAdapter, repoRoot } from "./adapter.mjs";
+import { label as operatorLabel } from "./operator.mjs";
 
 export const LEDGER_DEFAULT = ".claude/scorecard.jsonl";
 
@@ -27,7 +28,10 @@ export const LEDGER_DEFAULT = ".claude/scorecard.jsonl";
    rubric that will be changed in one of the two places. The skills cite this file. */
 export const RUBRIC = {
   human: {
-    label: "Wyatt",
+    /* A PLACEHOLDER, NOT A NAME. The real label is whatever the operator asked to be called,
+       resolved per repo in standings() — this kit had one person's name welded through it once,
+       and it read as somebody else's tool to everyone else. "You" is what an unanswered kit says. */
+    label: "You",
     role: "the prompt",
     graded_by: "mentor",
     dims: {
@@ -41,9 +45,9 @@ export const RUBRIC = {
     role: "the delivery",
     graded_by: "critic",
     dims: {
-      delivery: { w: 0.50, label: "Delivery",  what: "Did the thing he ASKED for actually happen? Not 'is this good work.' Per item: done, partial, or not done." },
+      delivery: { w: 0.50, label: "Delivery",  what: "Did the thing they ASKED for actually happen? Not 'is this good work.' Per item: done, partial, or not done." },
       evidence: { w: 0.30, label: "Evidence",  what: "Was each claim backed by a check that could have failed? A check that cannot fail proves nothing and scores nothing." },
-      scope:    { w: 0.20, label: "Scope",     what: "Did it stay inside the ask? Unasked-for work costs here, and costs double when it displaced something he did ask for." },
+      scope:    { w: 0.20, label: "Scope",     what: "Did it stay inside the ask? Unasked-for work costs here, and costs double when it displaced something they did ask for." },
     },
   },
 };
@@ -201,7 +205,8 @@ export function standings(repo = repoRoot()) {
       dims[k] = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null;
     }
     sides[side] = {
-      side, label: RUBRIC[side].label, rounds: mine.length, xp, avg, dims,
+      side, label: side === "human" ? operatorLabel(repo) : RUBRIC[side].label,
+      rounds: mine.length, xp, avg, dims,
       level: levelFor(side, xp),
       streak: streakOf(mine),
       best: mine.length ? Math.max(...mine.map(e => e.score)) : null,

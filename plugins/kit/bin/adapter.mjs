@@ -159,7 +159,7 @@ export function loadAdapter(repo = repoRoot()) {
   };
 }
 
-/* THE MESSAGE THE CRITIC PRINTS WHEN THE ADAPTER IS MISSING. Wyatt's choice, 2026-08-27: it STOPS,
+/* THE MESSAGE THE CRITIC PRINTS WHEN THE ADAPTER IS MISSING. Ruled 2026-08-27: it STOPS,
    asks with the question UI, and offers to write the file. A half-configured repo is never entered
    silently. */
 export const NO_ADAPTER_NOTICE = `
@@ -168,9 +168,9 @@ This repo has no \`${ADAPTER_FILE}\`, so the critic does not know how it is test
 real users, or where past verdicts live.
 
 DO NOT quietly proceed with a partial review. Instead:
-  1. Tell Wyatt the file is missing and what it costs (name the checks that cannot run).
-  2. Ask him — with the question UI, never as prose — the questions in the template.
-  3. Offer to write \`${ADAPTER_FILE}\` from his answers, then run again.
+  1. Say the file is missing and what it costs (name the checks that cannot run).
+  2. Ask them — with the question UI, never as prose — the questions in the template.
+  3. Offer to write \`${ADAPTER_FILE}\` from their answers, then run again.
 
 The template is at \`templates/KIT-template.md\` beside this script.
 `.trim();

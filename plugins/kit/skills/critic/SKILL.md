@@ -1,16 +1,16 @@
 ---
 name: critic
-description: Show finished work to a fresh Critic before showing it to Wyatt. Use after any real work — something built, fixed, measured or shipped — to judge whether the thing he ASKED for actually happened, and to grade the delivery into the repo's scorecard. Not after a question answered or a file handed over.
-argument-hint: "<his request, VERBATIM — his exact words, not a summary>"
+description: Show finished work to a fresh Critic before showing it to the user. Use after any real work — something built, fixed, measured or shipped — to judge whether the thing they ASKED for actually happened, and to grade the delivery into the repo's scorecard. Not after a question answered or a file handed over.
+argument-hint: "<the request, VERBATIM — their exact words, not a summary>"
 allowed-tools: [Bash, Read, Glob, Grep, Agent, AskUserQuestion, Write, Edit]
 ---
 
-# /critic — did the thing he asked for happen?
+# /critic — did the thing they asked for happen?
 
 The user invoked this with: $ARGUMENTS
 
-**The sequence is: do the work → run a Critic → give Wyatt the Critic's verdict → grade the
-delivery → then your own account.**
+**The sequence is: do the work → run a Critic → relay the Critic's verdict → grade the delivery →
+then your own account.**
 
 *(This was called the CEO until 2026-09-19. Same job, honest name: it judges the work, it does not
 run anything.)*
@@ -18,7 +18,7 @@ run anything.)*
 ## Why this exists, and it is not about honesty
 
 A session once answered a 35-item playtest by shipping 22 fixes, verifying 4, and reporting success.
-**Nothing in that report was a lie.** The gap was between what he ASKED for and what was delivered —
+**Nothing in that report was a lie.** The gap was between what they ASKED for and what was delivered —
 and that gap is invisible from inside the work. Adjacent, competent, impressive work that misses the
 ask is exactly what this exists to catch.
 
@@ -32,7 +32,7 @@ ask is exactly what this exists to catch.
 BIN=""
 [ -n "${CLAUDE_PROJECT_DIR:-}" ] && [ -d "$CLAUDE_PROJECT_DIR/.claude/kit/bin" ] && BIN="$CLAUDE_PROJECT_DIR/.claude/kit/bin"
 [ -z "$BIN" ] && [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -d "$CLAUDE_PLUGIN_ROOT/bin" ] && BIN="$CLAUDE_PLUGIN_ROOT/bin"
-[ -n "$BIN" ] || { echo "STOP: cannot find the kit engines. Neither CLAUDE_PROJECT_DIR/.claude/kit/bin nor CLAUDE_PLUGIN_ROOT/bin resolved. Do not guess a path — tell Wyatt."; exit 1; }
+[ -n "$BIN" ] || { echo "STOP: cannot find the kit engines. Neither CLAUDE_PROJECT_DIR/.claude/kit/bin nor CLAUDE_PLUGIN_ROOT/bin resolved. Do not guess a path — say so."; exit 1; }
 echo "engine: $BIN"
 test -f "$CLAUDE_PROJECT_DIR/.claude/KIT.md" && echo "adapter: yes" || echo "adapter: MISSING"
 ```
@@ -41,21 +41,21 @@ test -f "$CLAUDE_PROJECT_DIR/.claude/KIT.md" && echo "adapter: yes" || echo "ada
 repo that carries its own copy (so it survives into a cloud container) must run the copy it can
 actually see, not a second one on the laptop. One brain per repo, chosen by presence.
 
-**If the adapter is MISSING, STOP.** Do not run a partial review and present it as a review. Tell
-Wyatt it is missing, name what cannot be checked without it, then ask him — **with the question UI,
-never as prose** — the questions in `templates/KIT-template.md`, and offer to write the file from his
+**If the adapter is MISSING, STOP.** Do not run a partial review and present it as a review. Say
+it is missing, name what cannot be checked without it, then ask — **with the question UI, never as
+prose** — the questions in `templates/KIT-template.md`, and offer to write the file from those
 answers. Then continue.
 
 ## Step 2 — assemble the brief
 
 ```bash
-node "$BIN/critic_brief.mjs" --ask="<HIS EXACT WORDS>"
+node "$BIN/critic_brief.mjs" --ask="<THEIR EXACT WORDS>"
 ```
 
-**`--ask` takes his words verbatim.** Not your summary of them. **The summary is where the drift
-already happened**, and a reviewer handed a paraphrase grades the paraphrase. If he invoked
-`/critic` with no argument, scroll up and take the request from his own message — do not reconstruct
-it from what you did.
+**`--ask` takes their words verbatim.** Not your summary of them. **The summary is where the drift
+already happened**, and a reviewer handed a paraphrase grades the paraphrase. If `/critic` was
+invoked with no argument, scroll up and take the request from their own message — do not
+reconstruct it from what you did.
 
 Fill in the **WHAT WAS DONE, AS CLAIMED** section yourself: files, commits, measurements, **and what
 was not done**. Admitting the gaps is not weakness here; a Critic that finds an unadmitted gap
@@ -100,9 +100,9 @@ node "$BIN/score.mjs" critic \
 
 | dimension | weight | what it measures |
 |---|---|---|
-| **Delivery** | 50% | Did the thing he ASKED for actually happen? Not "is this good work." Per item: done, partial, not done. |
+| **Delivery** | 50% | Did the thing they ASKED for actually happen? Not "is this good work." Per item: done, partial, not done. |
 | **Evidence** | 30% | Was each claim backed by a check that **could have failed**? A check that cannot fail proves nothing and scores nothing. |
-| **Scope** | 20% | Did it stay inside the ask? Unasked-for work costs here, and costs double when it displaced something he did ask for. |
+| **Scope** | 20% | Did it stay inside the ask? Unasked-for work costs here, and costs double when it displaced something they did ask for. |
 
 **The scores come from the Critic's findings, not from your sense of how it went.** If the Critic
 said PARTIAL, Delivery is not 90. If you cannot find the mentor's round id for this ask, pass
@@ -118,4 +118,4 @@ below 90 is not a high performer, it is a broken instrument.
 node "$BIN/dashboard.mjs"
 ```
 
-Then publish or update it per the `scorecard` skill, so the number he sees is the one in the file.
+Then publish or update it per the `scorecard` skill, so the number on screen is the one in the file.

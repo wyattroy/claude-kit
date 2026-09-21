@@ -1,7 +1,7 @@
 # claude-kit
 
-Wyatt's personal Claude Code kit. **Two roles, and the point is that they grade opposite halves of
-the same round.**
+A personal Claude Code kit. **Two roles, and the point is that they grade opposite halves of the
+same round.**
 
 | | what it does | when it runs |
 |---|---|---|
@@ -14,9 +14,9 @@ the engines with it; a bare skill cannot.
 
 ## Why two scores
 
-Wyatt, 2026-09-19: *"both critic would get a score and you would get a score and the dashboard would
-show both of these... to show how effectively all of the tooling in this pipeline, **including you
-as the human prompter**, are working."*
+The brief that produced it, 2026-09-19: *"both critic would get a score and you would get a score
+and the dashboard would show both of these... to show how effectively all of the tooling in this
+pipeline, **including you as the human prompter**, are working."*
 
 **A pipeline with two operators in it was measuring one of them.** Claude's output has always been
 reviewable — you can read the diff. The ask that produced it was not, because it scrolls past and
@@ -35,7 +35,7 @@ the number worth staring at:
 
 | | graded by | dimensions |
 |---|---|---|
-| **Wyatt** — the prompt | `mentor`, before the work runs | Framing 40% · Leverage 30% · Learnings 30% |
+| **You** — the prompt | `mentor`, before the work runs | Framing 40% · Leverage 30% · Learnings 30% |
 | **Claude** — the delivery | `critic`, after the work runs | Delivery 50% · Evidence 30% · Scope 20% |
 
 Grades go to `.claude/scorecard.jsonl` in **the repo they were earned in** — append-only, one JSON
@@ -47,6 +47,28 @@ into the same record a laptop session does.
 disk is a number that can disagree with the data it came from, and nothing on screen would say which
 one is lying. Eight tiers per side on shared thresholds (0 → 2000 XP), nine badges, and a streak
 that breaks honestly — one that stopped two days ago reads 0, not its old length.
+
+## Who it is coaching
+
+**The kit asks, once, and remembers.** The first time the mentor runs with nothing on file, it asks
+— with the question UI, one question — what you would like it to call you, and records the answer.
+It never guesses from the git log, the repo owner or the directory name; what someone wants to be
+called is theirs to say.
+
+The name resolves in this order, first hit wins:
+
+| source | for |
+|---|---|
+| `$CLAUDE_KIT_OPERATOR` | cloud containers and CI, which have no home directory to read |
+| `- **operator:** Name` in `.claude/KIT.md` | one repo, overriding the machine — a shared checkout, or a repo you maintain for someone else |
+| `~/.claude/claude-kit/operator.json` | the machine-wide answer, written once |
+| nothing | the board says **You** and the mentor keeps asking |
+
+Nothing anywhere in the kit hardcodes a person. `node plugins/kit/bin/operator.mjs where` says which
+source answered and why. This mattered more than it sounds: the kit spent its first month with one
+person's name welded through the skills and engines, which made it read as somebody else's tool to
+everybody else — and told every Critic that its reader "is a founder and designer, not an engineer,"
+which for most readers is simply false.
 
 ## The one check that can actually fail
 
@@ -62,7 +84,7 @@ So `bin/mentor_context.mjs` **looks** instead. It records the moment of every pr
 one asks whether any grade was written in between. If none was, it says so, with a running count —
 and `dashboard.mjs` reads the same counter and prints it on the board under *What this could not
 see*. That is still not enforcement; nothing can stop a model ignoring it. But it is a check that
-**fails when the thing fails**, and the failure lands somewhere Wyatt looks. That is the whole
+**fails when the thing fails**, and the failure lands somewhere you look. That is the whole
 difference between a guard and a decoration.
 
 ## The board
@@ -109,7 +131,7 @@ rewrite **PARTIAL, 72/100** and was right.
 ## Install
 
 ```bash
-git clone git@github.com:wyattroy/claude-kit.git ~/Projects/claude-kit
+git clone https://github.com/wyattroy/claude-kit.git ~/Projects/claude-kit
 cd ~/Projects/claude-kit && bash install.sh
 ```
 

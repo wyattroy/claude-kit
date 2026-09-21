@@ -1,6 +1,6 @@
 ---
 name: scorecard
-description: Show Wyatt the gamified scorecard — how well he is asking, how well Claude is delivering, both scored out of 100 with XP, levels, streaks and badges. Use when he asks how he is doing, how his prompting is scoring, what his level or streak is, to see or refresh the dashboard, or after a mentor or critic grade has been written and the board is now out of date.
+description: Show the gamified scorecard — how well the user is asking, how well Claude is delivering, both scored out of 100 with XP, levels, streaks and badges. Use when they ask how they are doing, how their prompting is scoring, what their level or streak is, to see or refresh the dashboard, or after a mentor or critic grade has been written and the board is now out of date.
 argument-hint: "[show | publish | open]"
 allowed-tools: [Bash, Read, Artifact]
 ---
@@ -9,15 +9,15 @@ allowed-tools: [Bash, Read, Artifact]
 
 The user invoked this with: $ARGUMENTS
 
-**Two scores, because this pipeline has two operators in it.** The `mentor` grades how Wyatt asked;
-the `critic` grades what Claude delivered. Until this existed, only one of them was ever measured —
-and it was not the one holding the keyboard.
+**Two scores, because this pipeline has two operators in it.** The `mentor` grades how the ask was
+framed; the `critic` grades what Claude delivered. Until this existed, only one of them was ever
+measured — and it was not the one holding the keyboard.
 
 ```bash
 BIN=""
 [ -n "${CLAUDE_PROJECT_DIR:-}" ] && [ -d "$CLAUDE_PROJECT_DIR/.claude/kit/bin" ] && BIN="$CLAUDE_PROJECT_DIR/.claude/kit/bin"
 [ -z "$BIN" ] && [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -d "$CLAUDE_PLUGIN_ROOT/bin" ] && BIN="$CLAUDE_PLUGIN_ROOT/bin"
-[ -n "$BIN" ] || { echo "STOP: cannot find the kit engines. Do not guess a path — tell Wyatt."; exit 1; }
+[ -n "$BIN" ] || { echo "STOP: cannot find the kit engines. Do not guess a path — say so."; exit 1; }
 ```
 
 ## show — the fast answer, in the terminal
@@ -28,12 +28,12 @@ node "$BIN/score.mjs" show
 
 Levels, XP, streaks, per-dimension averages, badges, and the last five head-to-head rounds. **Read
 it back in one short paragraph, and lead with the number that moved**, not with a recap of the
-layout he is already looking at.
+layout they are already looking at.
 
 ## publish — the board itself
 
-The dashboard is a **published Artifact**: one private page with a stable URL he can open from
-anywhere, not a file living only on the laptop that graded him.
+The dashboard is a **published Artifact**: one private page with a stable URL, openable from
+anywhere, not a file living only on the laptop that did the grading.
 
 ```bash
 node "$BIN/dashboard.mjs"        # writes .claude/scorecard.html from the ledger
@@ -43,7 +43,7 @@ cat .claude/scorecard.url 2>/dev/null   # the URL, if this repo already has a bo
 **Then use the `Artifact` tool, not a browser and not a copy-paste:**
 
 - **A URL came back** → publish with `url` set to it, and the same `file_path`. That **updates the
-  existing board in place**, so the link he has already opened keeps working. Read it first, as the
+  existing board in place**, so the link they have already opened keeps working. Read it first, as the
   tool requires, before publishing over it.
 - **No URL** → publish fresh with `icon: "scoreboard"` and a one-sentence `description`. Then write
   the returned URL to `.claude/scorecard.url` **in the same turn**:
@@ -57,10 +57,10 @@ cat .claude/scorecard.url 2>/dev/null   # the URL, if this repo already has a bo
 
 The page is rendered server-side by `dashboard.mjs` — every number is in the HTML before any script
 runs. **Do not hand-edit `.claude/scorecard.html`.** It is regenerated from the ledger on every run,
-so an edit is lost at the next grade and, until then, shows Wyatt a number the ledger does not agree
+so an edit is lost at the next grade and, until then, shows a number the ledger does not agree
 with.
 
-## open — show him the one that exists
+## open — show them the one that exists
 
 ```bash
 cat .claude/scorecard.url
@@ -74,7 +74,7 @@ the board's own masthead says when it was generated.
 
 | | graded by | dimensions (weight) |
 |---|---|---|
-| **Wyatt** — the prompt | `mentor`, before the work runs | Framing 40% · Leverage 30% · Learnings 30% |
+| **The operator** — the prompt | `mentor`, before the work runs | Framing 40% · Leverage 30% · Learnings 30% |
 | **Claude** — the delivery | `critic`, after the work runs | Delivery 50% · Evidence 30% · Scope 20% |
 
 XP is earned per round from the score (0–10, with a bonus band at 80/90/95), and eight named tiers

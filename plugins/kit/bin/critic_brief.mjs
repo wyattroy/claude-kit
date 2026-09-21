@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* critic_brief.mjs — assembles the Critic's brief in ANY repo. Made runnable rather than remembered.
  *
- * Wyatt, 2026-08-26: "is CEO in your documentation anywhere? I need to be able to ask you to run CEO too."
+ * Asked for, 2026-08-26: "is CEO in your documentation anywhere? I need to be able to ask you to run CEO too."
  * Renamed to the Critic 2026-09-19 — same job, honest name: it judges the work, it does not run anything.
  *
  * THE QUESTION THE CRITIC ANSWERS IS NARROW AND IT IS NOT "IS THIS GOOD WORK".
@@ -15,18 +15,21 @@
  * session's context vanish when the session ends — so the one mechanism designed to catch a repeat
  * offence silently stops working, with nothing on screen to say so.
  *
- *   node critic_brief.mjs --ask="<his request, VERBATIM>" [--since=origin/main] [--repo=/abs/path]
+ *   node critic_brief.mjs --ask="<their request, VERBATIM>" [--since=origin/main] [--repo=/abs/path]
  *
  * Prints a complete brief. Paste it into a FRESH agent. Append the verdict afterwards.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { loadAdapter, sh, NO_ADAPTER_NOTICE } from "./adapter.mjs";
+import { label as operatorLabel } from "./operator.mjs";
 
 const arg = (k, d) => { const a = process.argv.find(s => s.startsWith(`--${k}=`)); return a ? a.slice(k.length + 3) : d; };
 
 const A = loadAdapter(arg("repo", undefined));
 const REPO = A.repo;
+/* Whoever this kit is coaching — asked once, remembered, never hardcoded. */
+const WHO = operatorLabel(REPO);
 const ask = arg("ask", "");
 /* The baseline is production if the repo names one; otherwise the last commit, NOT `origin/null`.
    A baseline nobody nominated produces an empty diff that reads exactly like "nothing changed". */
@@ -59,8 +62,8 @@ evidence.push(["Last full test run", trial ? trial.split("\n").slice(0, 6).join(
 const out = `You are the Critic. Repo: ${REPO}. READ-ONLY — do not edit, create or commit. Absolute
 paths. Do not start a browser or a server. Bound your effort.
 
-**WYATT ASKED, VERBATIM:**
-${ask ? `"${ask}"` : `*** NOT SUPPLIED — rerun with --ask="his exact words". A summary is where the drift
+**${WHO.toUpperCase()} ASKED, VERBATIM:**
+${ask ? `"${ask}"` : `*** NOT SUPPLIED — rerun with --ask="their exact words". A summary is where the drift
 already happened; do not let the reviewer grade a paraphrase. ***`}
 
 **WHAT CHANGED (${since}..HEAD):**
@@ -87,15 +90,15 @@ ${prev}
 ${A.blindSpots()}
 
 **ANSWER, in this order:**
-1. For EACH thing he asked for: DONE / PARTIAL / NOT DONE, with the evidence you checked.
-2. What was delivered that he did NOT ask for, and whether it displaced something he did.
+1. For EACH thing they asked for: DONE / PARTIAL / NOT DONE, with the evidence you checked.
+2. What was delivered that they did NOT ask for, and whether it displaced something they did.
 3. Any claim unsupported by what is in the repo? Cite file:line.
 4. Is the fault from the last verdict fixed, or has it recurred in new clothing?
-5. One sentence Wyatt should read first.
+5. One sentence ${WHO} should read first.
 
-**RULES:** Plain English — he is a founder and designer, not an engineer; define any professional
-term once, in the same sentence. **You may say NO.** A criticism with no file:line citation is an
-opinion, not a finding. Assume the author is flattering himself. Your verdict reaches him in YOUR
+**RULES:** Plain English — write for a smart non-specialist; define any professional term
+once, in the same sentence. **You may say NO.** A criticism with no file:line citation is an
+opinion, not a finding. Assume the author is flattering themselves. Your verdict reaches them in YOUR
 words, especially when it is bad — a kind paraphrase makes this whole mechanism theatre.
 
 **6. THE SCORE.** End your reply with exactly this line and nothing after it, so the delivery grade
@@ -103,11 +106,11 @@ comes from YOU rather than from the author's sense of how it went:
 
     SCORE delivery=<0-100> evidence=<0-100> scope=<0-100> verdict=<DONE|PARTIAL|NOT_DONE> note=<one short line>
 
-- **delivery (50%)** — did the thing he ASKED for actually happen? Not "is this good work."
+- **delivery (50%)** — did the thing they ASKED for actually happen? Not "is this good work."
 - **evidence (30%)** — was each claim backed by a check that COULD HAVE FAILED? A check that cannot
   fail proves nothing and scores nothing.
 - **scope (20%)** — did it stay inside the ask? Unasked-for work costs here, and costs double when
-  it displaced something he did ask for.
+  it displaced something they did ask for.
 
 Grade like a teacher: **70 is competent, 85 is good, 95+ is rare.** A PARTIAL verdict with a 90 on
 delivery is a contradiction, and a scoreboard that never drops below 90 is a broken instrument, not

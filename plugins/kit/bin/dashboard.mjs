@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* dashboard.mjs — render the scorecard as a self-contained page.
  *
- * Wyatt, 2026-09-19: "both critic would get a score and you would get a score and the dashboard
+ * The brief, 2026-09-19: "both critic would get a score and you would get a score and the dashboard
  * would show both of these... to show how effectively all of the tooling in this pipeline,
  * INCLUDING YOU AS THE HUMAN PROMPTER, are working to execute the work."
  *
@@ -59,7 +59,7 @@ function plot(rounds) {
     const last = pts[pts.length - 1];
     return (pts.length > 1 ? `<path class="ln ${side}" d="${d}" fill="none"/>` : "")
       + pts.map(p => `<circle class="pt ${side}" cx="${x(p.i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="5" data-side="${side}" data-i="${p.i}"/>`).join("")
-      + `<text class="dl ${side}" x="${(x(last.i) + 12).toFixed(1)}" y="${(y(last.v) + 4).toFixed(1)}">${RUBRIC[side].label} ${last.v}</text>`;
+      + `<text class="dl ${side}" x="${(x(last.i) + 12).toFixed(1)}" y="${(y(last.v) + 4).toFixed(1)}">${esc(S.sides[side].label)} ${last.v}</text>`;
   }).join("");
 
   const xlabels = rounds.map((r, i) =>
@@ -81,9 +81,9 @@ function plot(rounds) {
 function panel(side) {
   const d = S.sides[side], R = RUBRIC[side];
   if (!d.rounds) return `<section class="op ${side} blank">
-      <header><span class="who">${esc(R.label)}</span><span class="role">${esc(R.role)}</span></header>
+      <header><span class="who">${esc(d.label)}</span><span class="role">${esc(R.role)}</span></header>
       <p class="none"><strong>Nothing graded yet.</strong> The ${esc(R.graded_by)} has not written a
-      grade for this side in this repo, so every figure for ${esc(R.label)} is unknown rather than zero.</p>
+      grade for this side in this repo, so every figure for ${esc(d.label)} is unknown rather than zero.</p>
     </section>`;
 
   const dims = Object.entries(R.dims).map(([k, m]) => `
@@ -113,7 +113,7 @@ function panel(side) {
     : `<span class="trend ${d.trend > 0 ? "up" : d.trend < 0 ? "down" : "flat"}">${d.trend > 0 ? "▲" : d.trend < 0 ? "▼" : "▬"} ${Math.abs(d.trend)} vs previous five</span>`;
 
   return `<section class="op ${side}">
-    <header><span class="who">${esc(R.label)}</span><span class="role">${esc(R.role)}</span></header>
+    <header><span class="who">${esc(d.label)}</span><span class="role">${esc(R.role)}</span></header>
     <div class="readout">
       <div class="big"><span class="num">${d.avg}</span><span class="den">/100</span>
         <span class="cap">average over ${d.rounds} round${d.rounds === 1 ? "" : "s"}</span></div>
@@ -400,7 +400,7 @@ footer{margin-top:26px;font-size:11.5px;color:var(--ink3);font-family:var(--mono
     <h2>Head to head</h2>
     <p class="say">One scale, both operators: a score out of 100 for every round.
     ${both ? "The distance between the lines is the interesting part — a well-framed ask that still missed is a delivery problem; a vague ask that landed anyway was luck." : "Only one side has grades, so there is no distance to read yet."}</p>
-    <div class="legend">${SIDES.map(s => `<span><i style="background:var(--${s})"></i>${esc(RUBRIC[s].label)} — ${esc(RUBRIC[s].role)}</span>`).join("")}</div>
+    <div class="legend">${SIDES.map(s => `<span><i style="background:var(--${s})"></i>${esc(S.sides[s].label)} — ${esc(RUBRIC[s].role)}</span>`).join("")}</div>
     ${plottable.length ? `<div class="plotbox">${plot(plottable)}</div><div class="tip" id="tip"></div>`
       : `<p class="clean">No rounds on record yet. Grade one with <code>score.mjs mentor</code> and this fills in.</p>`}
   </div>
@@ -423,7 +423,7 @@ footer{margin-top:26px;font-size:11.5px;color:var(--ink3);font-family:var(--mono
     human: r.human ? { score: r.human.score, scores: r.human.scores, note: r.human.note } : null,
     claude: r.claude ? { score: r.claude.score, scores: r.claude.scores, note: r.claude.note, verdict: r.claude.verdict } : null,
   })))};
-  var LBL = ${JSON.stringify(Object.fromEntries(SIDES.map(s => [s, { label: RUBRIC[s].label, dims: Object.fromEntries(Object.entries(RUBRIC[s].dims).map(([k, m]) => [k, m.label])) }])))};
+  var LBL = ${JSON.stringify(Object.fromEntries(SIDES.map(s => [s, { label: S.sides[s].label, dims: Object.fromEntries(Object.entries(RUBRIC[s].dims).map(([k, m]) => [k, m.label])) }])))};
   var svg = document.getElementById("plot"), tip = document.getElementById("tip"),
       cross = document.getElementById("cross");
   if (!svg || !tip) return;

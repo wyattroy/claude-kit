@@ -30,7 +30,7 @@ number: **delivery 65 · evidence 82 · scope 72 → 72/100** (the weighted tota
 
 | asked for | verdict | what it checked |
 |---|---|---|
-| Rename CEO → Critic | **DONE** | grepped every surviving file for `ceo`/`officers`/`cto`/`wyclau`/`pastry`/`team-*`; nine hits, all deliberate (the removals table, the back-compat fallback, the rename notes, one quoted line of Wyatt's kept as history). "No stray wiring, no half-renamed path." |
+| Rename CEO → Critic | **DONE** | grepped every surviving file for `ceo`/`officers`/`cto`/`wyclau`/`pastry`/`team-*`; nine hits, all deliberate (the removals table, the back-compat fallback, the rename notes, one quoted line of the author's kept as history). "No stray wiring, no half-renamed path." |
 | Remove the baggage | **DONE** | ran `vendor` into a scratch repo (13 files hashed), `check` → IN STEP; edited a vendored file → DRIFTED, exit 1; deleted one → caught too. "Word for word what was claimed." |
 | Mentor gives a tracked score | **PARTIAL** | weights in `ledger.mjs` match all four documents exactly; all four guards refused bad input with exit 2; out-of-range clamped; two corrupt ledger lines named by line number. **But the mentor has never graded anything** — the one entry was typed by the session that wrote the grader. |
 | Gamified dashboard | **PARTIAL** | figures confirmed baked into the HTML before any script runs; it fed the empty Claude side in a scratch copy and the head-to-head worked. **But the chosen deliverable — a published board with a link — did not exist.** "A gamified dashboard nobody can open is a rendering function." |
@@ -62,7 +62,7 @@ The grade above stands as written against `b19f52d` — it is not re-scored for 
 | "Nothing wired into settings.json" overstated | Qualified in `install.sh` and `SETUP.md`: true of the plugin, false of a vendored copy. |
 | **The recurrence** — nothing notices a skipped grade | `bin/mentor_context.mjs` records each prompt and reports when the turn that followed produced no grade, with a running count the **board prints** under "What this could not see". Proved by making it fire: silent with no ledger, fires on an ungraded turn, quiet again once a grade is written. |
 | The skill collision, wider | Not fixed — **still open**, and now said out loud on every `vendor` run and recorded in `SETUP.md`. |
-| Nobody has installed this | **Not fixable here.** It needs Wyatt's laptop and a real session. It is the top item. |
+| Nobody has installed this | **Not fixable here.** It needs a real laptop and a live session. It is the top item. |
 
 ---
 
@@ -106,7 +106,7 @@ someone made it fail on purpose.
 ### Where the review was working from an incomplete brief — recorded, not to excuse it
 
 It wrote that *"twelve hundred lines arrived before you got to weigh in on the approach."* In fact
-four questions were put to Wyatt with the question UI **before any code was written** — reach,
+four questions were put to the author with the question UI **before any code was written** — reach,
 adapter, CTO scope, and where verdicts live — and he chose all four recommendations, including
 "all three as a plugin". That exchange was **not included in the brief it was given**, which is a
 fault in the briefing, not in the reviewer. **Give the next CEO the questions and the answers.**

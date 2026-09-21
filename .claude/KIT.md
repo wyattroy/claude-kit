@@ -20,4 +20,4 @@ named here rather than merely omitted:
 | `production-url` | nothing is deployed. The kit is installed from a checkout, so there is no running service — only files other repos read |
 | `build-stamp-command` | no build step and no version string. `git rev-parse HEAD` is the whole identity |
 | `trial-report` | `test-command` is a syntax sweep that runs in under a second. A report file would be a stale copy of something cheaper to re-run |
-| `never-touch` | every file here is Wyatt's to edit; there is no generated output to protect |
+| `never-touch` | every file here is the maintainer's to edit; there is no generated output to protect |

@@ -19,6 +19,7 @@ Format is `- **key:** value`. Lines inside code fences are ignored, so examples 
 - **build-stamp-command:** <a command printing this build's identity, e.g. grep -o 'BUILD = "[^"]*"' src/version.js>
 - **test-command:** npm test
 - **trial-report:** .claude/TEST-REPORT.md
+- **operator:** <what the mentor and the scoreboard should call you>
 - **verdicts:** .claude/CRITIC-REVIEWS.md
 - **scorecard:** .claude/scorecard.jsonl
 - **never-touch:** CNAME, robots.txt, sitemap.xml
@@ -32,17 +33,18 @@ Format is `- **key:** value`. Lines inside code fences are ignored, so examples 
 | `build-stamp-command` | tells a reviewer WHICH build it is judging. Without it, that is UNKNOWN |
 | `test-command` | how this repo proves itself |
 | `trial-report` | where the last full run wrote its result, so a review can read it rather than trust a claim |
+| `operator` | what to call the person being coached. Unset, the mentor asks once and remembers the answer machine-wide |
 | `verdicts` | the standing record of past critic verdicts — **this is what makes a RECURRING fault visible** |
 | `scorecard` | the append-only grade ledger the mentor and the critic both write to, and the only thing the dashboard reads |
 | `never-touch` | files nothing here may modify, whatever the reason |
 
-## The questions to ask Wyatt if this file is missing
+## The questions to ask if this file is missing
 
-**Ask with the question UI, never as prose.** Put the measurement in the question where you can — he
-answers far better against real numbers than against abstractions.
+**Ask with the question UI, never as prose.** Put the measurement in the question where you can —
+people answer far better against real numbers than against abstractions.
 
 1. **Which branch reaches real users, and is there a build step between it and them?**
 2. **How does this repo prove itself — one command?** And where does that write its result?
 3. **What must never be touched, whatever the reason?**
 
-Then write the file from his answers and run again. Do not grade a repo you do not understand.
+Then write the file from their answers and run again. Do not grade a repo you do not understand.

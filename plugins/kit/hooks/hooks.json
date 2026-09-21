@@ -8,7 +8,7 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/mentor-session-start.sh\"",
             "timeout": 10,
-            "statusMessage": "the first reply opens as Wyatt's mentor"
+            "statusMessage": "the first reply opens as your mentor"
           }
         ]
       }

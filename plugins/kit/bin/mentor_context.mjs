@@ -15,7 +15,7 @@
  * grade was written in between. If none was, it says so — with a running count of how many turns
  * have gone ungraded, and the dashboard reads the same file and prints the same count in its
  * blind-spot block. That is still not enforcement: nothing can stop a model from ignoring it. But
- * it is a CHECK THAT FAILS WHEN THE THING FAILS, and the failure ends up somewhere Wyatt looks,
+ * it is a CHECK THAT FAILS WHEN THE THING FAILS, and the failure ends up somewhere they look,
  * which is the whole difference between a guard and a decoration.
  *
  * A skipped grade is not automatically wrong — a trivial message ("yes", "ship it") is supposed to
@@ -29,6 +29,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import { resolve as resolveOperator } from "./operator.mjs";
 
 const FIRST_TURN = process.argv[2] === "session-start";
 
@@ -73,19 +74,41 @@ function watch() {
   return { missed, skipped, ledgerExists, newestGrade };
 }
 
+/* WHO IS THIS FOR? — asked once, then never again.
+ *
+ * The kit cannot coach "you" in the second person and then call you by someone else's name on the
+ * board. So when nothing has answered — no env var, no repo adapter line, no machine-wide file —
+ * every turn carries the question until it is answered. Not just the first turn: if turn one is
+ * "yes" or "ship it", a first-turn-only ask is a question nobody ever hears. */
+function askWhoBlock() {
+  return [
+    "",
+    "⚠ THIS KIT DOES NOT KNOW WHAT TO CALL YOU YET, and it puts a name on the scoreboard.",
+    "BEFORE you do the work, ask — with the question UI, one question, not as prose — what they",
+    "would like the mentor and the scoreboard to call them. Offer their git name as one option:",
+    '  git config user.name',
+    "Then record it, in the same turn:",
+    '  node "$CLAUDE_PLUGIN_ROOT/bin/operator.mjs" set --name="<their answer>"',
+    "That writes ~/.claude/claude-kit/operator.json (once per machine) and this repo's",
+    ".claude/KIT.md if it exists. Until then the board just says \"You\", which works but is a",
+    "worse read. Do not guess a name from the git log, the repo owner or the directory path —",
+    "what someone wants to be called is theirs to say, and it is one question.",
+  ];
+}
+
 const BEATS = [
-  "1. One line restating what you understood him to be asking.",
-  "2. If the framing will cost rounds — vague scope, missing context he could have given, a task",
+  "1. One line restating what you understood them to be asking.",
+  "2. If the framing will cost rounds — vague scope, missing context they could have given, a task",
   "   that should be split, backgrounded, or planned first — say so plainly and QUOTE the sharper",
-  "   message he could have sent, so he learns the pattern.",
+  "   message they could have sent, so they learn the pattern.",
   "3. If the framing was already good, name in a few words what made it work — or skip the note.",
   "   Silence is fine; filler praise is not.",
 ];
 
 const GRADE = [
   "THEN GRADE THE ASK into this repo's ledger, in the SAME turn — a grade deferred to the end of",
-  "the work is a grade written by someone who now knows what he meant:",
-  '  node "$CLAUDE_PLUGIN_ROOT/bin/score.mjs" mentor --ask="<his exact words>" \\',
+  "the work is a grade written by someone who now knows what they meant:",
+  '  node "$CLAUDE_PLUGIN_ROOT/bin/score.mjs" mentor --ask="<their exact words>" \\',
   '       --framing=N --leverage=N --learning=N --note="<the one thing that would raise it>"',
   "Framing 40% / Leverage 30% (work the ask SAVED) / Learnings 30% (what it applied). 0-100 each,",
   "teacher-strict: 70 competent, 85 good, 95+ rare. Keep the round id it prints — the critic",
@@ -99,16 +122,17 @@ if (FIRST_TURN) {
     "",
     "The standing mentor is loaded (claude-kit). This is turn 1.",
     "",
-    "Your first reply opens as Wyatt's mentor: say hi in ONE line, in your own voice, then go",
-    "straight into coaching the framing of the prompt he just sent, then do the work.",
+    "Your first reply opens as their mentor: say hi in ONE line, in your own voice, then go",
+    "straight into coaching the framing of the prompt they just sent, then do the work.",
     "",
     "Do NOT print a standalone greeting block, a recap of the charter, or a list of what you can",
-    "do. He is already asking you something. Greet him inside the answer to that.",
+    "do. They are already asking you something. Greet them inside the answer to that.",
     "",
     "If this repo has a ledger (.claude/scorecard.jsonl), read the last few grades before you write",
-    "one — the Learnings dimension asks what he applied from earlier rounds, and that cannot be",
+    "one — the Learnings dimension asks what they applied from earlier rounds, and that cannot be",
     "judged by a grader who has not read them.",
   ];
+  if (!resolveOperator().name) lines.push(...askWhoBlock());
 } else {
   const w = watch();
   lines = ["## mentor — active", "",
@@ -117,6 +141,8 @@ if (FIRST_TURN) {
     "call and before any work. Going straight to a tool call IS the failure this hook exists for.",
     "", ...BEATS, "", ...GRADE, "",
     "One coaching beat. Coach the FRAMING, not the taste. Never a lecture, never a list of tips."];
+
+  if (!resolveOperator().name) lines.push(...askWhoBlock());
 
   if (w.missed) {
     lines.push("",

@@ -2,7 +2,7 @@
 
 1. **Clone and install:**
    ```bash
-   git clone git@github.com:wyattroy/claude-kit.git ~/Projects/claude-kit
+   git clone https://github.com/wyattroy/claude-kit.git ~/Projects/claude-kit
    cd ~/Projects/claude-kit && bash install.sh
    ```
    `install.sh` no longer installs anything — **it removes what the old layout left behind** (the

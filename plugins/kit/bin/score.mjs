@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* score.mjs — write one grade into the ledger, or read the standings back.
  *
- * Wyatt, 2026-09-19: "Make mentors give a score for how well you asked your prompt and how
+ * The brief, 2026-09-19: "Make mentors give a score for how well you asked your prompt and how
  * skillfully and how much usage is kind of saved by the skill that you asked your prompt with and
  * how well you integrated past learnings. That should all be part of this cool tracked score...
  * think of it like a grade that a teacher would give you."
@@ -12,7 +12,7 @@
  * grade appended with no round id can never be paired with the other side of the same round. The
  * weights, the XP curve and the schema live in ledger.mjs, and this is the only door into them.
  *
- *   node score.mjs mentor --ask="<his words>" --framing=80 --leverage=70 --learning=90 --note="..."
+ *   node score.mjs mentor --ask="<their words>" --framing=80 --leverage=70 --learning=90 --note="..."
  *   node score.mjs critic --round=r-1a2b3c4d --delivery=90 --evidence=70 --scope=100 \
  *                         --verdict=PARTIAL --note="..."
  *   node score.mjs show            # the standings, in the terminal
@@ -22,6 +22,8 @@
  */
 import { RUBRIC, SIDES, append, newId, standings, total, xpFor, levelFor, clamp, readLedger } from "./ledger.mjs";
 import { repoRoot } from "./adapter.mjs";
+import { label as operatorLabel } from "./operator.mjs";
+const LBL = (side) => (side === "human" ? operatorLabel(REPO) : RUBRIC[side].label);
 
 const argv = process.argv.slice(2);
 const cmd = argv[0];
@@ -45,7 +47,7 @@ if (cmd === "rubric") {
   for (const side of want) {
     const R = RUBRIC[side];
     if (!R) die(`unknown side "${side}" (known: ${SIDES.join(", ")})`);
-    console.log(`\n${R.label} — ${R.role}, graded by the ${R.graded_by}`);
+    console.log(`\n${LBL(side)} — ${R.role}, graded by the ${R.graded_by}`);
     for (const [k, d] of Object.entries(R.dims))
       console.log(`\n  ${d.label} (--${k}, weight ${Math.round(d.w * 100)}%)\n    ${d.what}`);
   }
@@ -138,7 +140,7 @@ const file = append(entry, REPO);
 const after = levelFor(side, standings(REPO).sides[side].xp);
 const gained = xpFor(entry.score);
 
-console.log(`\n  ${RUBRIC[side].label}: ${entry.score}/100   ` +
+console.log(`\n  ${LBL(side)}: ${entry.score}/100   ` +
   Object.entries(RUBRIC[side].dims).map(([k, m]) => `${m.label} ${scores[k]}`).join("  ") +
   (entry.verdict ? `   [${entry.verdict}]` : ""));
 console.log(`  +${gained} XP → ${after.xp}   round ${round}`);

@@ -13,10 +13,10 @@ about the reviewer and belongs on the record exactly as it was written.
 ---
 
 ## Review 1 — <date> · <what was reviewed>
-**One sentence:** *"<the line Wyatt should read first, in the Critic's own words>"*
+**One sentence:** *"<the line to read first, in the Critic's own words>"*
 
 - **Asked for / delivered:** DONE / PARTIAL / NOT DONE per item, with the evidence checked.
-- **Delivered but not asked for:** and whether it displaced something he did ask for.
+- **Delivered but not asked for:** and whether it displaced something they did ask for.
 - **Unsupported claims:** with file:line.
 - **Recurrence:** is the last verdict's fault fixed, or back in new clothing?
 - **Score:** `delivery=N evidence=N scope=N verdict=… ` — the same line written into the scorecard.

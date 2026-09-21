@@ -7,3 +7,8 @@
 # skipped-grade check's memory, it differs on every machine, and committing it would make one
 # machine's count everyone's.
 .claude/.mentor-turn
+
+# The published board is one account's artifact. The pointer is a per-account handle, not repo
+# content: in a public repo it is a link nobody else can open, and in a fork it would aim a
+# publish at somebody else's page. It stays on disk; it does not travel.
+.claude/scorecard.url

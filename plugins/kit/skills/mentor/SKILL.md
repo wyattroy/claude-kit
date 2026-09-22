@@ -50,7 +50,7 @@ grader who has not read the earlier rounds.
 ```bash
 BIN="${CLAUDE_PLUGIN_ROOT:-.}/bin"
 node "$BIN/score.mjs" show     # standings + the last rounds
-node "$BIN/score.mjs" rubric human   # what each dimension means, and its weight
+node "$BIN/score.mjs" rubric   # what each dimension means, and its weight
 ```
 
 Then grade it. Three dimensions, **0–100 each**, weights fixed in `bin/ledger.mjs`:
@@ -62,7 +62,7 @@ Then grade it. Three dimensions, **0–100 each**, weights fixed in `bin/ledger.
 | **Learnings** | 30% | Did it apply what earlier rounds established — prior rulings, mentor notes already given, this repo's conventions — instead of re-opening something settled? |
 
 ```bash
-node "$BIN/score.mjs" mentor \
+node "$BIN/score.mjs" grade \
   --ask="<THEIR EXACT WORDS — verbatim, not your summary>" \
   --framing=80 --leverage=65 --learning=90 \
   --note="<one line: the single thing that would most raise the next score>"
@@ -73,21 +73,20 @@ node "$BIN/score.mjs" mentor \
 **End the Mentor note with one line**, after the grade is written:
 
 ```
-**Ask 87/100** · framing 82 · leverage 92 · learnings 88 · L2 Scope Setter, 27 XP · Claude 72/100 · [board](https://claude.ai/artifact/...)
+**Ask 87/100** · framing 82 · leverage 92 · learnings 88 · L2 Scope Setter, 27 XP · [board](https://claude.ai/artifact/...)
 ```
 
 Take the numbers from what `score.mjs` printed — never recompute them. The board URL comes from
-`.claude/scorecard.url`; omit that segment when there is none. **If the critic has never graded
-this repo, write `Claude ungraded` rather than a number** — never invent one, and never reuse the
-human's score for it.
+`.claude/scorecard.url`; omit that segment when there is none.
+
+**The score is for the ask only.** Nothing here grades Claude, and the board has one side. Never add
+a second number for the delivery.
 
 **A grade written only to a file is a grade nobody reads.** The whole point of scoring the ask is
 that it lands where the coaching lands.
 
-**When Claude's side is two or more rounds behind**, say so in one clause and offer `/critic` on the
-most recent substantive piece of work. The mentor grades every ask; the critic grades only when
-invoked, so without that nudge the board drifts into measuring one operator — which is the exact
-thing this kit exists to prevent.
+**After real work, offer `/critic`** — a fresh agent judging whether the thing actually asked for
+happened. That is a judgement on the work, not a grade: it writes a verdict, and no number.
 
 It prints a **round id**. Hold onto it — the critic needs it to attach the delivery grade to this
 same ask, and an unattached grade can never be read against the words that produced it.
@@ -107,8 +106,8 @@ the coach.
 the critic's half, and letting a good outcome lift the ask's score destroys the only signal here —
 whether *their framing* is improving.
 
-**Never grade your own delivery.** If the ledger's Claude side is thin, that is a fact to report,
-not a gap to fill.
+**Never grade the delivery at all.** There is one score here and it is for the ask. What the work
+turned out to be is the critic's business, and the critic answers in sentences.
 
 ---
 

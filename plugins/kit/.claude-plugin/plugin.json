@@ -1,7 +1,7 @@
 {
   "name": "kit",
   "version": "3.0.0",
-  "description": "A Claude Code kit with two roles that grade opposite halves of the same round. The MENTOR coaches how each request was framed before the work runs, then grades the ask \u2014 framing, leverage, learnings applied. The CRITIC judges, in fresh context and its own words, whether the thing you ASKED for actually happened, then grades the delivery \u2014 did it happen, was there evidence, did it stay in scope. Both write to one append-only ledger per repo, and the SCORECARD renders it as a published board where the human prompter and the model are scored side by side.",
+  "description": "A Claude Code kit that trains the person asking. The MENTOR coaches how each request was framed before the work runs, then grades the ask out of 100 \u2014 framing, leverage, and learnings applied \u2014 into an append-only ledger per repo. The CRITIC judges the work in fresh context and its own words: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It records a VERDICT rather than a score, and every future critic is handed the last one so a recurring fault gets named. The SCORECARD renders the ledger as a published board with XP, levels, streaks and badges.",
   "keywords": [
     "mentor",
     "coaching",

@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "kit",
-      "description": "Two operators, both measured. The mentor coaches the framing of a request before the work runs and grades the ask (framing, leverage, learnings). The critic, in fresh context, judges the work itself \u2014 did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope \u2014 and the score it gives is a byproduct of that verdict. The scorecard publishes both sides on one board with XP, levels, streaks and badges. Skills register as critic, mentor and scorecard; repo specifics live in .claude/KIT.md, and anything missing is named out loud rather than silently skipped.",
+      "description": "A suite that makes working with Claude Code more effective, by training the person asking. The mentor coaches how each request was framed before the work runs, then grades the ask out of 100 \u2014 framing, leverage, learnings applied. The critic, in fresh context, judges the work itself: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope \u2014 and it writes a VERDICT, not a score. The scorecard publishes the ask scores as a board with XP, levels, streaks and badges. Skills register as critic, mentor and scorecard; repo specifics live in .claude/KIT.md, and anything missing is named out loud rather than silently skipped.",
       "category": "workflow",
       "source": "./plugins/kit"
     }

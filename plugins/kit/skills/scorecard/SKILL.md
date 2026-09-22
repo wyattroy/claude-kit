@@ -1,6 +1,6 @@
 ---
 name: scorecard
-description: Show the gamified scorecard — how well the user is asking, how well Claude is delivering, both scored out of 100 with XP, levels, streaks and badges. Use when they ask how they are doing, how their prompting is scoring, what their level or streak is, to see or refresh the dashboard, or after a mentor or critic grade has been written and the board is now out of date.
+description: Show the gamified scorecard — how well the user is framing their requests, scored out of 100 with XP, levels, streaks and badges. Use when they ask how they are doing, how their prompting is scoring, what their level or streak is, to see or refresh the dashboard, or after a mentor grade has been written and the board is now out of date.
 argument-hint: "[show | publish | open]"
 allowed-tools: [Bash, Read, Artifact]
 ---
@@ -9,9 +9,15 @@ allowed-tools: [Bash, Read, Artifact]
 
 The user invoked this with: $ARGUMENTS
 
-**Two scores, because this pipeline has two operators in it.** The `mentor` grades how the ask was
-framed; the `critic` grades what Claude delivered. Until this existed, only one of them was ever
-measured — and it was not the one holding the keyboard.
+**One score, and it is for the ask.** Claude's output has always been reviewable — you can read the
+diff. The request that produced it was not, because it scrolls past and nobody writes it down. The
+`mentor` grades it before the work runs; the board is the record of whether that framing is
+improving.
+
+*(The board showed a second score for Claude's delivery until 2026-09-22. It was removed: a score
+changes behaviour only for someone who carries it between rounds, and a fresh model instance does
+not. The `critic` still runs — it judges the work and writes a **verdict**, which is what it was
+always for.)*
 
 ```bash
 BIN=""
@@ -26,7 +32,7 @@ BIN=""
 node "$BIN/score.mjs" show
 ```
 
-Levels, XP, streaks, per-dimension averages, badges, and the last five head-to-head rounds. **Read
+Levels, XP, streaks, per-dimension averages, badges, and the last five graded rounds. **Read
 it back in one short paragraph, and lead with the number that moved**, not with a recap of the
 layout they are already looking at.
 
@@ -74,21 +80,21 @@ the board's own masthead says when it was generated.
 
 | | graded by | dimensions (weight) |
 |---|---|---|
-| **The operator** — the prompt | `mentor`, before the work runs | Framing 40% · Leverage 30% · Learnings 30% |
-| **Claude** — the delivery | `critic`, after the work runs | Delivery 50% · Evidence 30% · Scope 20% |
+| **The ask** | `mentor`, before the work runs | Framing 40% · Leverage 30% · Learnings 30% |
 
-XP is earned per round from the score (0–10, with a bonus band at 80/90/95), and eight named tiers
-sit on the same thresholds for both sides. Streaks count consecutive days with a graded round, and
-break honestly — a streak that stopped two days ago reads 0, not its old length.
+The `critic` writes no score. It judges the work and records a verdict in the file named by
+`.claude/KIT.md`.
 
-**The gap column is the one to point at.** Ask score minus delivery score, per round: a well-framed
-ask that still missed is a Claude problem; a vague ask that landed anyway was luck, and luck is not
-a process.
+XP is earned per round from the score (0–10, with a bonus band at 80/90/95) across eight named
+tiers. Streaks count consecutive days with a graded round, and break honestly — a streak that
+stopped two days ago reads 0, not its old length.
+
+**The line is the thing to point at.** A single round's score is noise; the trend across ten is the
+only evidence that the framing is actually getting better.
 
 ## Never fill a hole to make the board look finished
 
-If a side has no grades, the page says so in **What this could not see**, and that block is the most
-honest thing on it. Do not seed the ledger with invented rounds, do not grade Claude's work
-yourself to fill the empty half, and do not average away a bad round. **A dashboard that renders a
-confident chart over missing data is the exact failure the critic exists to catch** — committed by
-the scoreboard.
+If nothing has been graded, the page says so in **What this could not see**, and that block is the
+most honest thing on it. Do not seed the ledger with invented rounds, and do not average away a bad
+one. **A dashboard that renders a confident chart over missing data is the exact failure the critic
+exists to catch** — committed by the scoreboard.

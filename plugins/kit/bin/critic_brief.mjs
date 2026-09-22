@@ -101,27 +101,14 @@ once, in the same sentence. **You may say NO.** A criticism with no file:line ci
 opinion, not a finding. Assume the author is flattering themselves. Your verdict reaches them in YOUR
 words, especially when it is bad — a kind paraphrase makes this whole mechanism theatre.
 
-**6. THE SCORE.** End your reply with exactly this line and nothing after it, so the delivery grade
-comes from YOU rather than from the author's sense of how it went:
-
-    SCORE delivery=<0-100> evidence=<0-100> scope=<0-100> verdict=<DONE|PARTIAL|NOT_DONE> note=<one short line>
-
-- **delivery (50%)** — did the thing they ASKED for actually happen? Not "is this good work."
-- **evidence (30%)** — was each claim backed by a check that COULD HAVE FAILED? A check that cannot
-  fail proves nothing and scores nothing.
-- **scope (20%)** — did it stay inside the ask? Unasked-for work costs here, and costs double when
-  it displaced something they did ask for.
-
-Grade like a teacher: **70 is competent, 85 is good, 95+ is rare.** A PARTIAL verdict with a 90 on
-delivery is a contradiction, and a scoreboard that never drops below 90 is a broken instrument, not
-a high performer.
+**6. THE LAST LINE.** End with one sentence naming the single most important thing found, so the
+verdict can be quoted without being summarised. No score, no grade, no number out of ten — this is a
+judgement on the work, and reducing it to a figure is how a review becomes a formality.
 
 ---
 AFTERWARDS (the author, not you): append the verdict to \`${A.values["verdicts"]}\`, newest at the
-top. **A verdict nobody recorded is a recurrence check nobody can run.** Then write the SCORE line
-into \`${A.values["scorecard"] || ".claude/scorecard.jsonl"}\` with \`score.mjs critic\`, attached to
-the round id the mentor printed for this same ask — **a delivery score floating free of its ask
-cannot be read against anything.**`;
+top, newest first and append-only. **A verdict nobody recorded is a recurrence check nobody can
+run** — every future critic is handed the last one so a repeating fault gets named as repeating.`;
 
 if (!A.exists) console.log(NO_ADAPTER_NOTICE + "\n");
 console.log(out);

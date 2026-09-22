@@ -95,37 +95,13 @@ evidence about the reviewer and belongs on the record exactly as written.
 broken.** Each Critic is handed the previous verdict so it can say whether the same fault is
 *recurring*. A verdict nobody recorded is a recurrence check nobody can run.
 
-## Step 6 — grade the delivery into the scorecard
+## Step 6 — there is no step 6
 
-The verdict is prose; the scorecard is the trend. **Both, or the trend is a story you tell yourself.**
+**The critic does not write a score.** It used to; that was removed 2026-09-22.
 
-```bash
-node "$BIN/score.mjs" rubric claude     # what each dimension means, and its weight
-node "$BIN/score.mjs" critic \
-  --round=<the id the mentor grade printed for THIS ask> \
-  --delivery=90 --evidence=70 --scope=100 \
-  --verdict=DONE|PARTIAL|NOT_DONE \
-  --note="<one line, in the Critic's terms>"
-```
+A score changes behaviour only for someone who carries it between rounds, and a fresh model
+instance does not — it starts every session knowing nothing about its average. Grading it cost real
+tokens and taught nobody. The verdict is what this was always for, and it is what the next critic is
+handed so a recurring fault gets named.
 
-| dimension | weight | what it measures |
-|---|---|---|
-| **Delivery** | 50% | Did the thing they ASKED for actually happen? Not "is this good work." Per item: done, partial, not done. |
-| **Evidence** | 30% | Was each claim backed by a check that **could have failed**? A check that cannot fail proves nothing and scores nothing. |
-| **Scope** | 20% | Did it stay inside the ask? Unasked-for work costs here, and costs double when it displaced something they did ask for. |
-
-**The scores come from the Critic's findings, not from your sense of how it went.** If the Critic
-said PARTIAL, Delivery is not 90. If you cannot find the mentor's round id for this ask, pass
-`--round=unpaired` and say so out loud — the dashboard reports unpaired grades rather than hiding
-them, and a delivery score floating free of its ask cannot be read against anything.
-
-**Grade like a teacher: 70 is competent, 85 is good, 95+ is rare.** A Claude side that never drops
-below 90 is not a high performer, it is a broken instrument.
-
-## Step 7 — refresh the board
-
-```bash
-node "$BIN/dashboard.mjs"
-```
-
-Then publish or update it per the `scorecard` skill, so the number on screen is the one in the file.
+**If you catch yourself wanting to end with a number, end with a sentence instead.**

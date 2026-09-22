@@ -108,28 +108,19 @@ function askWhoBlock() {
 /* THE SCORE, IN THE REPLY. Asked for 2026-09-22: a score in the mentor's replies, and a short
  * link to the board. A grade written only to a file is a grade nobody reads — the
  * whole point of a score is that it lands where the coaching lands. So the note now ends with one
- * line carrying this round's grade, the level, Claude's side, and the board.
+ * line carrying this round's grade, the level and XP, and a link to the board.
  *
- * Both sides are shown deliberately. The critic runs only when invoked, so Claude's side goes
- * stale while the human's fills up — and a scoreboard that only ever measures one operator is the
- * exact asymmetry this kit was built to remove. Printing "Claude ungraded" every turn is the
- * honest way to make that visible instead of quietly showing one number. */
+ * ONLY THE ASK IS SCORED. The line used to carry a second number for Claude's delivery; that was
+ * removed 2026-09-22, because a score changes behaviour only for someone who carries it between
+ * rounds and a fresh model instance does not. The critic still runs — it answers in sentences. */
 function boardLine(repo) {
   try {
     const S = standings(repo);
-    const h = S.sides.human, c = S.sides.claude;
     let url = null;
     try { url = fs.readFileSync(path.join(repo, ".claude", "scorecard.url"), "utf8").trim() || null; } catch {}
     const parts = [];
-    parts.push(h.rounds ? `so far: ${h.label} avg ${h.avg}/100 over ${h.rounds}, L${h.level.n} ${h.level.name}, ${h.xp} XP, streak ${h.streak}d`
-                        : "so far: nothing graded on the human side yet");
-    parts.push(c.rounds ? `Claude avg ${c.avg}/100 over ${c.rounds}` : "Claude UNGRADED (the critic has never run here)");
-    /* THE ASYMMETRY, MEASURED RATHER THAN FELT. The mentor grades every ask; the critic grades
-       only when it is invoked. So the human side fills up while Claude's goes stale, and the board
-       slowly becomes what this kit exists to prevent — a scoreboard measuring one operator. The
-       gap is a number, so it is reported as one instead of left to be noticed. */
-    const behind = h.rounds - c.rounds;
-    if (behind >= 2) parts.push(`Claude is ${behind} rounds behind: the critic has not judged the last ${behind} pieces of work. Say so in the note and offer /critic on the most recent substantive one.`);
+    parts.push(S.rounds ? `so far: ${S.label} avg ${S.avg}/100 over ${S.rounds}, L${S.level.n} ${S.level.name}, ${S.xp} XP, streak ${S.streak}d`
+                        : "so far: nothing graded in this repo yet");
     if (url) parts.push(`board: ${url}`);
     return parts;
   } catch { return []; }
@@ -138,13 +129,15 @@ function boardLine(repo) {
 const NOTE_FORMAT = [
   "END the Mentor note with ONE line, exactly this shape, after you have written the grade:",
   "",
-  "  **Ask N/100** · framing N · leverage N · learnings N · L<k> <Level>, <xp> XP · Claude <M>/100 · [board](<url>)",
+  "  **Ask N/100** · framing N · leverage N · learnings N · L<k> <Level>, <xp> XP · [board](<url>)",
   "",
   "Take every number from what score.mjs printed — it prints the score, the level and the XP on",
-  "one line — and do not recompute any of them. Use the board URL",
-  "below if one is given; omit the [board](...) segment entirely if none is. If Claude's side has",
-  "no grade, write `Claude ungraded` rather than a number: never invent one, and never reuse the",
-  "human score for it. One line, at the end of the note, not a table.",
+  "one line — and do not recompute any of them. Use the board URL below if one is given; omit the",
+  "[board](...) segment entirely if none is. One line, at the end of the note, not a table.",
+  "",
+  "THE SCORE IS FOR THE ASK ONLY. Nothing here grades Claude: a score changes behaviour only for",
+  "someone who carries it between rounds, and a fresh model instance does not. Never add a second",
+  "number for the delivery, and never imply the board has two sides.",
 ];
 
 const BEATS = [
@@ -159,7 +152,7 @@ const BEATS = [
 const GRADE = [
   "THEN GRADE THE ASK into this repo's ledger, in the SAME turn — a grade deferred to the end of",
   "the work is a grade written by someone who now knows what they meant:",
-  '  node "$CLAUDE_PLUGIN_ROOT/bin/score.mjs" mentor --ask="<their exact words>" \\',
+  '  node "$CLAUDE_PLUGIN_ROOT/bin/score.mjs" grade --ask="<their exact words>" \\',
   '       --framing=N --leverage=N --learning=N --note="<the one thing that would raise it>"',
   "Framing 40% / Leverage 30% (work the ask SAVED) / Learnings 30% (what it applied). 0-100 each,",
   "teacher-strict: 70 competent, 85 good, 95+ rare. Keep the round id it prints — the critic",

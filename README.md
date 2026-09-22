@@ -1,35 +1,32 @@
 # claude-kit
 
-A personal Claude Code kit. **Two roles, and the point is that they grade opposite halves of the
-same round.**
+**A suite of tools that make working with Claude Code more effective** — by training the person
+asking, and by giving them an easy way to have Claude critique its own work.
 
 | | what it does | when it runs |
 |---|---|---|
-| **`mentor`** | coaches how the request was framed, then **grades the ask** | before the work executes |
-| **`critic`** | a *fresh* agent judges the work: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope | after the work executes |
-| **`scorecard`** | publishes both scores on one board — XP, levels, streaks, badges | on demand |
+| **`mentor`** | coaches how the request was framed, then **grades the ask** out of 100 | before the work executes |
+| **`critic`** | a *fresh* agent judges the work: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It writes a **verdict**, not a score | after the work executes |
+| **`scorecard`** | publishes the ask scores as a board — XP, levels, streaks, badges | on demand |
 
 Everything ships as **one plugin** (`plugins/kit/`) — a plugin can carry the two mentor hooks and
 the engines with it; a bare skill cannot.
 
-## Why two scores
+## Why the ask is the thing that gets scored
 
-The brief that produced it, 2026-09-19: *"both critic would get a score and you would get a score
-and the dashboard would show both of these... to show how effectively all of the tooling in this
-pipeline, **including you as the human prompter**, are working."*
+**Claude's output has always been reviewable — you can read the diff. The request that produced it
+was not**, because it scrolls past and nobody writes it down. So the mentor grades the words you
+actually sent, *before* the work runs and before anyone knows how it turned out, and the board is
+the record of whether your framing is improving.
 
-**A pipeline with two operators in it was measuring one of them.** Claude's output has always been
-reviewable — you can read the diff. The ask that produced it was not, because it scrolls past and
-nobody writes it down. So the mentor grades the words actually sent, *before* the work runs and
-before anyone knows how it turned out, and the critic grades what came back. The gap between them is
-the number worth staring at:
+**Claude is not scored, deliberately.** The board carried a delivery grade until 2026-09-22 and it
+was removed: a score changes behaviour only for someone who carries it between rounds, and a fresh
+model instance does not — it starts every session knowing nothing about its average. Grading it cost
+real tokens and taught nobody.
 
-| the gap | what it means |
-|---|---|
-| **ask high, delivery low** | the framing was fine. This is a Claude problem, and the critic should be specific about it. |
-| **ask low, delivery high** | it landed anyway — that is luck, and luck is not a process. |
-| **both low** | the round was never going to work, and the mentor note says why. |
-| **both high** | the pipeline worked. Bank it and look at the streak. |
+**The critic lost nothing that mattered.** Its output was always the verdict on the work; the number
+was only ever a byproduct. It still runs, still in fresh context, still handed the previous verdict
+so a recurring fault gets named as recurring.
 
 ### What is graded
 
@@ -39,14 +36,14 @@ the number worth staring at:
 | **Claude** — the delivery | `critic`, after the work runs | Delivery 50% · Evidence 30% · Scope 20% |
 
 Grades go to `.claude/scorecard.jsonl` in **the repo they were earned in** — append-only, one JSON
-object per line, both sides of a round joined by a round id. Per-repo rather than one global file so
+object per line, one per graded round. Per-repo rather than one global file so
 it travels with the checkout, which means a cloud session (which sees none of `~/.claude`) grades
 into the same record a laptop session does.
 
 **XP, levels, streaks and badges are computed on read, never stored.** A derived number written to
 disk is a number that can disagree with the data it came from, and nothing on screen would say which
-one is lying. Eight tiers per side on shared thresholds (0 → 2000 XP), nine badges, and a streak
-that breaks honestly — one that stopped two days ago reads 0, not its old length.
+one is lying. Eight tiers (0 → 2000 XP), eight badges, and a streak that breaks honestly — one that
+stopped two days ago reads 0, not its old length.
 
 ## Who it is coaching
 
@@ -97,8 +94,8 @@ Every number is in the HTML before any script runs — the still frame is the wh
 palette is validated rather than eyeballed; `plugins/kit/PALETTE.md` carries the validator's actual
 output for both light and dark, because that claim once rested on nothing but the author's word.
 
-**A section called *What this could not see*** names the ungraded side, the unpaired grade, the
-ungraded turns and the unreadable ledger line by line number. A dashboard that renders a confident
+**A section called *What this could not see*** names an empty ledger, the turns that went ungraded,
+the unreadable line by line number, and the delivery grades left over from the two-sided era. A dashboard that renders a confident
 chart over missing data is the exact failure the critic exists to catch.
 
 ## What is in here
@@ -116,7 +113,7 @@ plugins/kit/
   bin/mentor_context.mjs            the hook payload AND the skipped-grade check
   bin/operator.mjs                  who the kit is coaching, asked once and remembered
   bin/ledger.mjs                    rubrics, weights, XP curve, ladders, badges, standings
-  bin/score.mjs                     the only door into the ledger: mentor / critic / show / rubric
+  bin/score.mjs                     the only door into the ledger: grade / show / rubric
   bin/dashboard.mjs                 renders the board, server-side
   bin/critic_brief.mjs              assembles the brief a fresh Critic is handed
   bin/adapter.mjs                   what THIS repo keeps where, and what it could not see
@@ -126,8 +123,8 @@ plugins/kit/
 ```
 
 About 1,693 lines of engine and installer. The kit reviews itself: `.claude/CRITIC-REVIEWS.md`
-carries two real verdicts, newest at the top, append-only — including the one that graded this
-rewrite **PARTIAL, 72/100** and was right.
+carries three real verdicts, newest at the top, append-only — including the one that read the
+public README and found it still telling every visitor that nobody had ever installed this.
 
 ## Install
 

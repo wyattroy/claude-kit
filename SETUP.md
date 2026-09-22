@@ -32,10 +32,11 @@
    **stops, says what cannot be checked without it, asks the three questions with the question UI,
    and offers to write the file from the answers.** It never grades a repo it does not understand.
 
-5. **First graded round:** send one real work request, let the mentor grade it, do the work, then
-   `/critic "<your request, verbatim>"`. That is one complete round on both sides. Then
-   `/scorecard publish` for the board, and save the URL it returns — `.claude/scorecard.url` is what
-   makes the next publish update that same board rather than make a second one.
+5. **First graded round:** send one real work request and let the mentor grade it. Then, after some
+   real work, `/critic "<your request, verbatim>"` — a fresh agent judging whether the thing you
+   asked for actually happened. It writes a verdict, not a score. Finally `/scorecard publish` for
+   the board, and save the URL it returns — `.claude/scorecard.url` is what makes the next publish
+   update that same board rather than make a second one.
 
 ## Known limits
 

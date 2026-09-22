@@ -19,4 +19,5 @@ about the reviewer and belongs on the record exactly as it was written.
 - **Delivered but not asked for:** and whether it displaced something they did ask for.
 - **Unsupported claims:** with file:line.
 - **Recurrence:** is the last verdict's fault fixed, or back in new clothing?
-- **Score:** `delivery=N evidence=N scope=N verdict=… ` — the same line written into the scorecard.
+- **One sentence to read first:** the single most important thing found. No score — this is a
+  judgement on the work, and reducing it to a figure is how a review becomes a formality.

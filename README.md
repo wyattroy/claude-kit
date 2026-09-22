@@ -6,7 +6,7 @@ asking, and by giving them an easy way to have Claude critique its own work.
 | | what it does | when it runs |
 |---|---|---|
 | **`mentor`** | coaches how the request was framed, then **grades the ask** out of 100 | before the work executes |
-| **`critic`** | a *fresh* agent judges the work: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It writes a **verdict**, not a score | after the work executes |
+| **`critic`** | a *fresh* agent judges the work: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It writes a **verdict** and a **hard won lesson**, not a score | after the work executes |
 | **`scorecard`** | publishes the ask scores as a board — XP, levels, streaks, badges | on demand |
 
 Everything ships as **one plugin** (`plugins/kit/`) — a plugin can carry the two mentor hooks and
@@ -67,6 +67,53 @@ person's name welded through the skills and engines, which made it read as someb
 everybody else — and told every Critic that its reader "is a founder and designer, not an engineer,"
 which for most readers is simply false.
 
+## Two students, not one
+
+**The mentor teaches the person asking. The critic teaches Claude.** Both halves need a place to
+put what they learned, and the two places work differently because the two students do.
+
+**You remember.** A mentor note from Tuesday reaches you on Thursday by itself, so the coaching goes
+in the reply and the score goes in a ledger you can look back at.
+
+**Claude does not.** Every session starts empty, so a fault named in review 2 was met fresh in
+review 3 and named again. The verdicts file made a recurrence *visible to the next critic*; it did
+nothing to stop the recurrence happening.
+
+So after each review the critic distils its findings into **`.claude/HARD-WON-LESSONS.md`** — short,
+imperative, general — and **the SessionStart hook reads them back into every session in that repo.**
+That is the whole mechanism. A critic that only accuses teaches nobody; a critic whose findings are
+read at the start of the next session teaches the only student it has.
+
+```bash
+node plugins/kit/bin/lessons.mjs show     # exactly what the next session will be handed
+```
+
+Each lesson is the **rule, not the incident** — *"a check that passes on empty input has not run"*
+travels; *"the file-map verifier broke on line 12"* does not. The file is capped and injected newest
+first, and the hook says out loud when older lessons were left out rather than silently truncating.
+
+## The playbook refreshes itself, or says it did not
+
+**Claude Code ships weekly. Advice about it goes stale fast, and stale advice delivered confidently
+is worse than none.**
+
+The coaching is grounded in `plugins/kit/PLAYBOOK.md`, which carries a machine-readable
+`last-refreshed` date. `bin/playbook.mjs` measures its age, and **the SessionStart hook demands a
+refresh when it is overdue** (default: every 7 days) — naming the sources to check, requiring an
+entry in *Recent changes*, and requiring a stamp to reset the clock.
+
+This used to be one sentence in the mentor's prose asking it to notice a date. **A model that skips
+the note skips the noticing too**, and nothing measured the age, so nothing could report it. It is
+still the model that does the research; it is no longer the model that decides whether research is
+due.
+
+**"No material change" is a valid entry** — it records that the check ran, which is the difference
+between a refresh and a gap. And the mentor is told not to manufacture novelty: if a search turns up
+nothing that changes the advice, it says so in a clause rather than inventing a trick to look useful.
+
+Where the shipped playbook is not writable (a plugin install rather than a checkout), refreshes and
+the stamp go to `~/.claude/claude-kit/playbook.md`, and the effective date is the newer of the two.
+
 ## The one check that can actually fail
 
 Every other guard here is a prompt, and **a prompt you are holding is a prompt you can skip.** The
@@ -112,6 +159,9 @@ plugins/kit/
   hooks/*.sh                        two-line wrappers; the payload lives in bin/
   bin/mentor_context.mjs            the hook payload AND the skipped-grade check
   bin/operator.mjs                  who the kit is coaching, asked once and remembered
+  bin/lessons.mjs                   Hard Won Lessons: what the critic teaches Claude
+  bin/playbook.mjs                  is the coaching still current? measures the playbook's age
+  PLAYBOOK.md                       what the coaching is grounded in, with a date on it
   bin/ledger.mjs                    rubrics, weights, XP curve, ladders, badges, standings
   bin/score.mjs                     the only door into the ledger: grade / show / rubric
   bin/dashboard.mjs                 renders the board, server-side
@@ -122,7 +172,7 @@ plugins/kit/
 .claude/                            the kit dogfoods itself: its own adapter, verdicts and ledger
 ```
 
-About 1,693 lines of engine and installer. The kit reviews itself: `.claude/CRITIC-REVIEWS.md`
+About 1859 lines of engine and installer. The kit reviews itself: `.claude/CRITIC-REVIEWS.md`
 carries three real verdicts, newest at the top, append-only — including the one that read the
 public README and found it still telling every visitor that nobody had ever installed this.
 

@@ -38,6 +38,9 @@ if [ "$CMD" = "vendor" ] || [ "$CMD" = "check" ]; then
     echo "$SRC/bin|$DST/bin"
     echo "$SRC/templates|$DST/templates"
     echo "$SRC/hooks|$DST/hooks"
+    # The playbook travels with the kit: it is what the coaching is grounded in, and playbook.mjs
+    # resolves it relative to bin/. Vendored without it, every session reports the playbook missing.
+    echo "$SRC/PLAYBOOK.md|$DST/PLAYBOOK.md"
     for s in critic mentor scorecard; do echo "$SRC/skills/$s/SKILL.md|$REPO/.claude/skills/$s/SKILL.md"; done
   }
 

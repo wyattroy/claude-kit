@@ -31,6 +31,8 @@ import path from "node:path";
 import { execSync } from "node:child_process";
 import { resolve as resolveOperator } from "./operator.mjs";
 import { standings } from "./ledger.mjs";
+import { contextBlock as lessonsBlock } from "./lessons.mjs";
+import { refreshBlock } from "./playbook.mjs";
 
 const FIRST_TURN = process.argv[2] === "session-start";
 
@@ -177,6 +179,21 @@ if (FIRST_TURN) {
     "judged by a grader who has not read them.",
   ];
   if (!resolveOperator().name) lines.push(...askWhoBlock());
+
+  /* THE CRITIC'S HALF OF THE TEACHING. The mentor coaches a person who remembers between sessions;
+     the critic's findings land on a model that does not. Reading them back here is the only thing
+     that turns a verdict into a lesson rather than an accusation repeated every few reviews. */
+  try {
+    const lb = lessonsBlock(repo());
+    if (lb) lines.push("", ...lb.lines);
+  } catch { /* an unreadable lessons file costs the lessons, not the session */ }
+
+  /* AND THE PLAYBOOK'S AGE, measured rather than eyeballed. This used to be a sentence asking the
+     model to notice a date; a model that skips the note skips the noticing. */
+  try {
+    const rb = refreshBlock();
+    if (rb) lines.push(...rb);
+  } catch { /* if the playbook cannot be read, say nothing rather than demand a refresh of nothing */ }
 } else {
   const w = watch();
   lines = ["## mentor — active", "",
@@ -193,7 +210,29 @@ if (FIRST_TURN) {
   const bl = boardLine(repo());
   if (bl.length) lines.push("", ...bl.map(x => "  " + x));
 
+  /* A POINTER, NOT THE TEXT. The full lessons went in at SessionStart; repeating them on every
+     turn would tax every turn to re-say what is already in context. */
+  try {
+    const lb = lessonsBlock(repo());
+    if (lb) lines.push(`  ${lb.total} hard-won lesson(s) are loaded from this repo — apply them; add one with lessons.mjs after a critic review.`);
+  } catch { /* silent: the pointer is a convenience, not a check */ }
+
   if (!resolveOperator().name) lines.push(...askWhoBlock());
+
+  /* THE CRITIC'S HALF OF THE TEACHING. The mentor coaches a person who remembers between sessions;
+     the critic's findings land on a model that does not. Reading them back here is the only thing
+     that turns a verdict into a lesson rather than an accusation repeated every few reviews. */
+  try {
+    const lb = lessonsBlock(repo());
+    if (lb) lines.push("", ...lb.lines);
+  } catch { /* an unreadable lessons file costs the lessons, not the session */ }
+
+  /* AND THE PLAYBOOK'S AGE, measured rather than eyeballed. This used to be a sentence asking the
+     model to notice a date; a model that skips the note skips the noticing. */
+  try {
+    const rb = refreshBlock();
+    if (rb) lines.push(...rb);
+  } catch { /* if the playbook cannot be read, say nothing rather than demand a refresh of nothing */ }
 
   if (w.missed) {
     lines.push("",

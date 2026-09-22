@@ -117,41 +117,40 @@ turned out to be is the critic's business, and the critic answers in sentences.
 
 ---
 
-## The playbook the coaching draws on
+## The playbook the coaching draws on — and it must be current
 
-Distilled from Anthropic's official guidance (docs + engineering posts), last refreshed
-**2026-08-22**. If this looks stale (more than ~2 weeks old) or they ask "what's new," check the
-Claude Code docs changelog and the Anthropic engineering blog with web search **before** advising.
+**The coaching is grounded in `PLAYBOOK.md`, beside this skill.** Read it; do not coach from memory.
 
-### Framing a work request — the pre-flight the Framing score checks against
-- **State the outcome, not the steps.** What should be true when done, and how they'll judge it.
-- **Point at files and evidence instead of describing them.** @-mention files; paste screenshots
-  rather than describing what is on screen.
-- **Size it honestly.** One session = one coherent piece of work. Distinct tasks → `/clear` between
-  them or separate sessions; slow independent parts → background agents.
-- **Say what NOT to touch.** Scope fences prevent well-meaning drift.
-- **Front-load decisions before walking away.** Answer everything answerable now; a run that blocks
-  twenty minutes after they leave burns the window.
+**It carries a date, and the date is a mechanism rather than a note.** `bin/playbook.mjs status`
+reports its age, and the SessionStart hook injects a refresh demand when it is overdue (default:
+every 7 days). Claude Code ships weekly — advice about it goes stale fast, and **stale advice
+delivered confidently is worse than none.**
 
-### Session hygiene
-- `/clear` between unrelated tasks; a long mixed session pollutes its own context.
-- Set model and effort at the start, not midway — a mid-session change busts the prompt cache.
-- `/context` to audit what loads at startup; `/compact` before walking away from a long session.
-- Plan mode for anything architectural — approve the plan, then let it run.
-- Commit checkpoints often, so any wrong turn is a cheap revert.
+### When the hook says the playbook is overdue
 
-### Delegation ladder — escalate only when the previous rung genuinely limits them
-1. One good session with a strong `CLAUDE.md` — more capable than most people expect.
-2. Subagents for parallel read-only work (research, search, review).
-3. Background agents for slow independent parts they should not sit and watch.
-4. Long-running harnesses (progress files, evidence-gated done, fresh-context verification) only for
-   multi-session builds.
+Do the research **before** you coach, in the same turn:
 
-**This is the ladder the Leverage score is measured against.** An ask that names the right rung
-scores high; one that makes you work out the rung from scratch, or that reaches three rungs past
-what the work needs, does not.
+1. `WebSearch` / `WebFetch` the sources listed in the playbook's front matter for anything new since
+   `last-refreshed`.
+2. Append **one entry** to its *Recent changes* section: what actually changed, and what it means
+   for the advice above it. **"No material change" is a real entry** — it records that the check ran,
+   which is the whole difference between a refresh and a gap.
+3. Stamp it so the clock resets:
+   ```bash
+   node "$BIN/playbook.mjs" stamp
+   ```
 
-### Verification — universal
-- Separate building from checking: the one who built it never certifies it.
-- Evidence over claims: a screenshot, or a check that was proved capable of failing.
-- **A check that cannot fail proves nothing.**
+Where the shipped `PLAYBOOK.md` is not writable (a plugin install rather than a checkout), the stamp
+and the refreshes go to `~/.claude/claude-kit/playbook.md` instead, and the effective date is the
+newer of the two.
+
+**Do not manufacture novelty.** If the search turns up nothing that changes the advice, say so in a
+clause and move on. A mentor inventing a trick to look useful is the failure this whole file guards
+against.
+
+## Hard won lessons — the other half
+
+The mentor teaches the person asking. **The critic teaches Claude**, through
+`.claude/HARD-WON-LESSONS.md` — findings from past reviews, read back into every session by the
+SessionStart hook. You do not write them; the `critic` skill does, after a review. Read them and
+apply them, and when a Mentor note would repeat one, say which.

@@ -8,6 +8,7 @@ work.
 - **production-ref:** main
 - **test-command:** bash -n install.sh && bash -n plugins/kit/hooks/mentor-prompt.sh && bash -n plugins/kit/hooks/mentor-session-start.sh && for f in plugins/kit/bin/*.mjs; do node --check "$f" || exit 1; done && node -e 'for (const f of [".claude-plugin/marketplace.json","plugins/kit/.claude-plugin/plugin.json","plugins/kit/hooks/hooks.json"]) JSON.parse(require("fs").readFileSync(f,"utf8"))'
 - **verdicts:** .claude/CRITIC-REVIEWS.md
+- **lessons:** .claude/HARD-WON-LESSONS.md
 - **scorecard:** .claude/scorecard.jsonl
 
 ## What is deliberately absent, and why

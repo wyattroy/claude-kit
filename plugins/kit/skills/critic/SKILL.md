@@ -95,13 +95,43 @@ evidence about the reviewer and belongs on the record exactly as written.
 broken.** Each Critic is handed the previous verdict so it can say whether the same fault is
 *recurring*. A verdict nobody recorded is a recurrence check nobody can run.
 
-## Step 6 — there is no step 6
+## Step 6 — distil the verdict into a HARD WON LESSON
 
-**The critic does not write a score.** It used to; that was removed 2026-09-22.
+**This is the step that makes the critic teach rather than only accuse.**
 
-A score changes behaviour only for someone who carries it between rounds, and a fresh model
-instance does not — it starts every session knowing nothing about its average. Grading it cost real
-tokens and taught nobody. The verdict is what this was always for, and it is what the next critic is
-handed so a recurring fault gets named.
+The mentor coaches a person, who carries Tuesday's note into Thursday. Your verdicts land on a model
+that does not: every session starts empty, so a fault named in review 2 was met fresh in review 3
+and named again. The verdicts file made a recurrence *visible to the next critic*. It did nothing to
+stop the recurrence happening.
+
+So take the one or two findings that would have **prevented** this round's fault, and write them
+where the next session will read them:
+
+```bash
+node "$BIN/lessons.mjs" add \
+  --lesson="<short, imperative, general — the rule, not the incident>" \
+  --why="<one line: the specific failure that earned it>" \
+  --from="Critic review N"
+```
+
+They land in the file named by `lessons` in the adapter (default `.claude/HARD-WON-LESSONS.md`),
+newest first, and the **SessionStart hook reads them back into every session in this repo.** That
+is the whole mechanism: `lessons.mjs show` is what the next session will see.
+
+**Write the rule, not the incident.** *"A check that passes on empty input has not run"* travels;
+*"the README file-map verifier broke on line 12"* does not.
+
+**One or two per review, never a list.** Every line is injected into every session, so a lesson that
+is really a paragraph is a tax on every future turn. If it needs context to make sense, it is still
+a verdict — leave it in the reviews file.
+
+**Not everything deserves a lesson.** A one-off slip is not a pattern. Write one when you can say
+what it would have prevented.
+
+## Step 7 — there is no score
+
+**The critic does not write one.** It used to; that was removed 2026-09-22. A score changes
+behaviour only for someone who carries it between rounds, and a fresh model instance does not.
+The verdict and the lesson are what this is for.
 
 **If you catch yourself wanting to end with a number, end with a sentence instead.**

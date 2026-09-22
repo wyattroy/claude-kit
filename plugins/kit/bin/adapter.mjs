@@ -62,12 +62,14 @@ export const KEYS = {
   "test-command":        { need: true,  what: "how this repo proves itself" },
   "trial-report":        { need: false, what: "where the last full test run wrote its result" },
   "verdicts":            { need: true,  what: "the standing record of past critic verdicts — what makes a RECURRING fault visible" },
+  "lessons":             { need: false, what: "Hard Won Lessons — what the critic teaches Claude, read back at the start of every session" },
   "scorecard":           { need: false, what: "the append-only grade ledger the mentor and critic both write to" },
   "never-touch":         { need: false, what: "files nothing here may modify, whatever the reason" },
 };
 
 const DEFAULTS = {
   verdicts:  ".claude/CRITIC-REVIEWS.md",
+  lessons:   ".claude/HARD-WON-LESSONS.md",
   scorecard: ".claude/scorecard.jsonl",
 };
 
@@ -142,7 +144,7 @@ export function loadAdapter(repo = repoRoot()) {
       }
       for (const key of Object.keys(KEYS)) {
         const f = p(key);
-        if (f && /^(verdicts|scorecard|trial-report)$/.test(key) && !fs.existsSync(f)) {
+        if (f && /^(verdicts|lessons|scorecard|trial-report)$/.test(key) && !fs.existsSync(f)) {
           lines.push(`- \`${key}\` points at \`${values[key]}\`, which is **not on disk**. Whatever it records is UNKNOWN.`);
         }
       }

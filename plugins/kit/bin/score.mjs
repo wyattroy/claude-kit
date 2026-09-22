@@ -144,6 +144,11 @@ console.log(`\n  ${LBL(side)}: ${entry.score}/100   ` +
   Object.entries(RUBRIC[side].dims).map(([k, m]) => `${m.label} ${scores[k]}`).join("  ") +
   (entry.verdict ? `   [${entry.verdict}]` : ""));
 console.log(`  +${gained} XP → ${after.xp}   round ${round}`);
+/* THE CURRENT LEVEL IS PRINTED ON EVERY PATH. It used to appear only on a level-up, while the
+   ordinary path printed the NEXT level's name — so the mentor, told to take the level "from what
+   score.mjs printed", was reading a source that did not emit it. Caught by Critic review 3. */
+console.log(`  L${after.n} ${after.name}   ${after.xp} XP` +
+  (after.next === null ? "   (max)" : `   ${after.toNext} to ${after.nextName}`));
 if (after.n > before.n) console.log(`  ★ LEVEL UP — L${after.n} ${after.name}`);
-else if (after.next !== null) console.log(`  ${bar(after.pct)}  ${after.toNext} XP to ${after.nextName}`);
+else if (after.next !== null) console.log(`  ${bar(after.pct)}`);
 console.log(`  ${file}\n`);

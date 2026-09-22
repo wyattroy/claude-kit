@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "kit",
-      "description": "Two operators, both measured. /mentor coaches the framing of a request before the work runs and grades the ask (framing, leverage, learnings). /critic judges in fresh context whether the thing you ASKED for actually happened and grades the delivery (delivery, evidence, scope). /scorecard publishes the board that shows both, with XP, levels, streaks and badges. Repo specifics live in .claude/KIT.md; anything missing is named out loud, never silently skipped.",
+      "description": "Two operators, both measured. The mentor coaches the framing of a request before the work runs and grades the ask (framing, leverage, learnings). The critic, in fresh context, judges the work itself \u2014 did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope \u2014 and the score it gives is a byproduct of that verdict. The scorecard publishes both sides on one board with XP, levels, streaks and badges. Skills register as critic, mentor and scorecard; repo specifics live in .claude/KIT.md, and anything missing is named out loud rather than silently skipped.",
       "category": "workflow",
       "source": "./plugins/kit"
     }

@@ -6,7 +6,7 @@ same round.**
 | | what it does | when it runs |
 |---|---|---|
 | **`mentor`** | coaches how the request was framed, then **grades the ask** | before the work executes |
-| **`critic`** | a *fresh* agent judges whether the thing he ASKED for actually happened, then **grades the delivery** | after the work executes |
+| **`critic`** | a *fresh* agent judges the work: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope | after the work executes |
 | **`scorecard`** | publishes both scores on one board — XP, levels, streaks, badges | on demand |
 
 Everything ships as **one plugin** (`plugins/kit/`) — a plugin can carry the two mentor hooks and
@@ -20,7 +20,7 @@ pipeline, **including you as the human prompter**, are working."*
 
 **A pipeline with two operators in it was measuring one of them.** Claude's output has always been
 reviewable — you can read the diff. The ask that produced it was not, because it scrolls past and
-nobody writes it down. So the mentor grades the words he actually sent, *before* the work runs and
+nobody writes it down. So the mentor grades the words actually sent, *before* the work runs and
 before anyone knows how it turned out, and the critic grades what came back. The gap between them is
 the number worth staring at:
 
@@ -114,6 +114,7 @@ plugins/kit/
   hooks/hooks.json                  SessionStart + UserPromptSubmit, carried by the plugin
   hooks/*.sh                        two-line wrappers; the payload lives in bin/
   bin/mentor_context.mjs            the hook payload AND the skipped-grade check
+  bin/operator.mjs                  who the kit is coaching, asked once and remembered
   bin/ledger.mjs                    rubrics, weights, XP curve, ladders, badges, standings
   bin/score.mjs                     the only door into the ledger: mentor / critic / show / rubric
   bin/dashboard.mjs                 renders the board, server-side
@@ -124,7 +125,7 @@ plugins/kit/
 .claude/                            the kit dogfoods itself: its own adapter, verdicts and ledger
 ```
 
-About 1,450 lines of engine and installer. The kit reviews itself: `.claude/CRITIC-REVIEWS.md`
+About 1,693 lines of engine and installer. The kit reviews itself: `.claude/CRITIC-REVIEWS.md`
 carries two real verdicts, newest at the top, append-only — including the one that graded this
 rewrite **PARTIAL, 72/100** and was right.
 
@@ -159,7 +160,7 @@ prevent.**
 
 | open | state |
 |---|---|
-| **Nobody has installed this.** Whether the skills land as `/critic` or `/kit:critic`, and whether Claude Code runs `SessionStart`/`UserPromptSubmit` hooks from a plugin manifest at all, is unverified | **the top item.** Every other claim rests on it. The scripts were proved to emit valid hook JSON; that the harness runs them was not proved |
+| **Grading is not reliable.** The hooks fire — that is now proved — but a hook can inject an instruction, it cannot compel one | **the top item.** Installed from this repo and run live 2026-09-22: skills register under the bare names `critic`, `mentor`, `scorecard`; both hooks register; ~430 tokens always-on. On the first live work request the hook ran and the model wrote no note and no grade anyway. Grading also depends on a Bash call, so a session without Bash permission cannot grade at all |
 | **Vendoring collides with the plugin.** `vendor` writes `.claude/skills/{critic,mentor,scorecard}/SKILL.md` while the plugin ships its own copy of each. On a machine with both, each exists twice and nothing decides which wins | open since 2026-08-27 and **wider now** — three skills, not one. Harmless in a cloud container (no plugin there). `install.sh vendor` says so on every run; `install.sh check` catches drift |
 
 ## What was removed, 2026-09-19, and why it is listed rather than just deleted

@@ -5,9 +5,19 @@ argument-hint: "<the request, VERBATIM — their exact words, not a summary>"
 allowed-tools: [Bash, Read, Glob, Grep, Agent, AskUserQuestion, Write, Edit]
 ---
 
-# /critic — did the thing they asked for happen?
+# /critic — judge the work
 
 The user invoked this with: $ARGUMENTS
+
+**The verdict is the point. The score is a byproduct of it.** This is not a grading machine with a
+review attached; it is a judgement on the work, which happens to end in a number so the judgement
+can be tracked over time. If the two ever pull apart, the words win — write the verdict you
+actually believe and let the score follow it.
+
+The narrow question it starts from is **did the thing they ASKED for actually happen**, because
+that is the gap invisible from inside the work. "Not is this good work" means *not a style review* —
+it never meant quality is out of scope. Evidence that could have failed, and scope that held, are
+quality, and they are graded.
 
 **The sequence is: do the work → run a Critic → relay the Critic's verdict → grade the delivery →
 then your own account.**

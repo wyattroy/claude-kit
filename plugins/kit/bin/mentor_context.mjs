@@ -105,8 +105,8 @@ function askWhoBlock() {
   ];
 }
 
-/* THE SCORE, IN THE REPLY. Wyatt, 2026-09-22: "i want mentor to give a score in his replies (and
- * a short link to the artifact)". A grade written only to a file is a grade nobody reads — the
+/* THE SCORE, IN THE REPLY. Asked for 2026-09-22: a score in the mentor's replies, and a short
+ * link to the board. A grade written only to a file is a grade nobody reads — the
  * whole point of a score is that it lands where the coaching lands. So the note now ends with one
  * line carrying this round's grade, the level, Claude's side, and the board.
  *
@@ -140,7 +140,8 @@ const NOTE_FORMAT = [
   "",
   "  **Ask N/100** · framing N · leverage N · learnings N · L<k> <Level>, <xp> XP · Claude <M>/100 · [board](<url>)",
   "",
-  "Take N and the level from what score.mjs printed — do not recompute them. Use the board URL",
+  "Take every number from what score.mjs printed — it prints the score, the level and the XP on",
+  "one line — and do not recompute any of them. Use the board URL",
   "below if one is given; omit the [board](...) segment entirely if none is. If Claude's side has",
   "no grade, write `Claude ungraded` rather than a number: never invent one, and never reuse the",
   "human score for it. One line, at the end of the note, not a table.",
@@ -187,8 +188,11 @@ if (FIRST_TURN) {
   const w = watch();
   lines = ["## mentor — active", "",
     "Treat this as a work request unless it is trivial (\"yes\", \"ship it\", a question back).",
-    "If it is a work request, OPEN your reply with a Mentor note — 2-4 lines, BEFORE any tool",
-    "call and before any work. Going straight to a tool call IS the failure this hook exists for.",
+    "If it is a work request, OPEN your reply with a Mentor note — 2-4 lines, BEFORE any tool call",
+    "THAT DOES THE WORK. Going straight into the work is the failure this hook exists for.",
+    "",
+    "The ONE tool call allowed ahead of the note is score.mjs itself: the note ends with the score,",
+    "the score comes from that call, so it necessarily runs first. That is the grading, not the work.",
     "", ...BEATS, "", ...GRADE, "",
     "One coaching beat. Coach the FRAMING, not the taste. Never a lecture, never a list of tips.",
     "", ...NOTE_FORMAT];

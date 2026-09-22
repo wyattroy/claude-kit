@@ -24,8 +24,8 @@
      plugin's hooks loaded at all.)*
    - The mentor then writes a grade. Confirm with `node .../bin/score.mjs show`, or just ask
      "how am I scoring?" — the `scorecard` skill answers.
-   - `/critic` and `/scorecard` appear in the command list. **Check the spelling they land at** —
-     `/critic` or `/kit:critic`. Nobody has verified which.
+   - `/critic` and `/scorecard` appear in the command list. Verified 2026-09-22: the plugin
+     registers them under the **bare** names `critic`, `mentor`, `scorecard` — no `kit:` prefix.
 
 4. **Give each project its adapter.** Copy `plugins/kit/templates/KIT-template.md` to
    `<repo>/.claude/KIT.md` and fill in the one page. A project without one is not broken — `/critic`

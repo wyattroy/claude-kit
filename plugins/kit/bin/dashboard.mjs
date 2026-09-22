@@ -174,7 +174,7 @@ function blind() {
   const lines = [];
   if (!S.exists) lines.push(`There is no ledger at <code>${esc(path.relative(REPO, S.file))}</code>. <strong>Nothing in this repo has ever been graded</strong> — every figure on this page is absent, not zero.`);
   for (const side of SIDES) if (S.exists && !S.sides[side].rounds)
-    lines.push(`<strong>${esc(RUBRIC[side].label)} has no grades.</strong> The ${esc(RUBRIC[side].graded_by)} has never written to this ledger, so the head-to-head cannot be drawn and half this board is unknown.`);
+    lines.push(`<strong>${esc(S.sides[side].label)} has no grades.</strong> The ${esc(RUBRIC[side].graded_by)} has never written to this ledger, so the head-to-head cannot be drawn and half this board is unknown.`);
   /* THE SKIPPED-GRADE COUNTER, read from the same file the prompt hook writes. This is where the
      one check that can fail comes to land: a mentor that stops grading is now visible HERE, on the
      board, rather than only in a hook nobody reads. */

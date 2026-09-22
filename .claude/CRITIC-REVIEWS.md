@@ -13,6 +13,54 @@ about the reviewer and belongs on the record exactly as it was written.
 
 ---
 
+## Review 3 — 2026-09-22 · `4421357`, four ungraded rounds at once
+**Verdict: PARTIAL.** delivery 62 · evidence 78 · scope 84 → **70/100**
+
+**Its sentence, in its words:**
+> *"You asked whether the commands work, the session found out, wrote the answer into a commit
+> message, and left your public README telling every visitor that nobody has ever installed this —
+> and the score line you asked for ships as an instruction ordering the model to write it before the
+> tool call that produces it."*
+
+### What it caught that was NOT on the author's self-reported list
+
+The brief volunteered nine of the author's own mistakes. The critic was told not to grade that list
+as honesty but to find what was missing from it. It found six things, every one reproduced here
+before being believed:
+
+| finding | status |
+|---|---|
+| **`README.md:162` and `SETUP.md:28` still asserted "nobody has installed this" and that the command spelling was unverified** — in a public repo, in the same commit that disproved both | **FIXED.** Both now carry the live result: skills register as bare `critic`/`mentor`/`scorecard`, both hooks register, ~430 tokens always-on |
+| **The score-line instruction contradicted itself.** "OPEN with the note BEFORE any tool call" against "END the note after you have written the grade", where writing the grade IS a tool call. Unsatisfiable even with Bash permission | **FIXED.** The ban was always meant to stop the WORK starting before the coaching; `score.mjs` is the grading, not the work, and is now named as the one call allowed ahead of the note |
+| **`score.mjs` never printed the current level** except on a level-up — the ordinary path printed the NEXT level's name. The mentor was told to take the level "from what score.mjs printed", from a source that did not emit it | **FIXED.** The level, name and XP print on every path |
+| **`README.md` file map omitted `bin/operator.mjs`** — a 141-line file three engines import — two rounds after the author confessed the map's verifier had passed on empty strings | **FIXED** |
+| **`README.md` claimed ~1,450 lines against an actual 1,684**, while the brief claimed every number had been re-read from code | **FIXED**, and re-measured rather than adjusted by hand |
+| **`dashboard.mjs:177` used the hardcoded default label** while the rest of the page used the resolved one: a board for "Ada" would read *"You has no grades"* | **FIXED** |
+| **The owner's first name was back in the shipped plugin** (`mentor_context.mjs:108`), two commits after the round whose whole purpose was removing it — and `README.md` still said "he" twice on the public front page | **FIXED** |
+
+### The recurrence check, and it is split
+
+**Fixed:** the skipped-grade detector. *"A check that can fail, that did fail, and whose failure
+surfaces where you look."*
+
+**Recurred, inside this round's own feature:** the enforcement for "the note carries a score" is once
+again a prompt — *"You fixed the instance and rebuilt the pattern in the same commit."* Nothing
+checks whether the score line actually appeared; the counter watches for a missing ledger row, not a
+missing score line, which is the thing that was asked for. **Still open.**
+
+**A second-generation instance it named:** *"not a check that cannot fail, but a check that failed
+and whose finding was not allowed to reach the document it contradicts."* That is the README finding
+above, and it is the one worth remembering.
+
+### One finding not accepted
+
+It reported `marketplace.json` as advertising slash commands with no `commands/` directory behind
+them. Skills in Claude Code are invocable as slash commands, and `claude plugin details` confirmed
+all three register under bare names — so the description was not false. The wording was rewritten
+anyway to lead with the judgement rather than the commands.
+
+---
+
 ## Review 2 — 2026-09-19 · `b19f52d`, the Critic rename, the purge and the scorecard
 **Asked, verbatim:** *"Rename CEO to critic / Repackage Claude Kit to remove all trash... / Make
 mentors give a score for how well you asked your prompt... / Create a gamified dashboard..."*

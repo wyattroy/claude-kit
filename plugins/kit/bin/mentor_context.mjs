@@ -30,6 +30,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 import { resolve as resolveOperator } from "./operator.mjs";
+import { standings } from "./ledger.mjs";
 
 const FIRST_TURN = process.argv[2] === "session-start";
 
@@ -61,9 +62,17 @@ function watch() {
     }
   } catch { /* no ledger in this repo — nothing is being tracked here, so nothing was skipped */ }
 
-  /* The previous turn is only judged when there WAS one and a ledger exists to judge it against. */
+  /* THE GATE, AND THE BUG IT REPLACES. This used to require the ledger FILE to exist before it
+     would count a skipped grade — so a repo that had never been graded could never register a
+     skip, and the check was blind in exactly the case that matters most: grading that never
+     started at all. Caught 2026-09-22 by running the plugin live, where the model skipped the
+     grade twice and the counter sat at 0. The same disease this whole file was written to cure.
+
+     The gate is now "is this repo set up for the kit" — a declared adapter, or a ledger already
+     on disk. An unconfigured repo stays silent; a configured one is watched from its first turn. */
   const ledgerExists = fs.existsSync(ledgerFile);
-  const missed = Boolean(prev && ledgerExists && (!newestGrade || newestGrade <= prev));
+  const usesKit = ledgerExists || fs.existsSync(path.join(R, ".claude", "KIT.md"));
+  const missed = Boolean(prev && usesKit && (!newestGrade || newestGrade <= prev));
   if (missed) skipped += 1;
 
   try {
@@ -95,6 +104,47 @@ function askWhoBlock() {
     "what someone wants to be called is theirs to say, and it is one question.",
   ];
 }
+
+/* THE SCORE, IN THE REPLY. Wyatt, 2026-09-22: "i want mentor to give a score in his replies (and
+ * a short link to the artifact)". A grade written only to a file is a grade nobody reads — the
+ * whole point of a score is that it lands where the coaching lands. So the note now ends with one
+ * line carrying this round's grade, the level, Claude's side, and the board.
+ *
+ * Both sides are shown deliberately. The critic runs only when invoked, so Claude's side goes
+ * stale while the human's fills up — and a scoreboard that only ever measures one operator is the
+ * exact asymmetry this kit was built to remove. Printing "Claude ungraded" every turn is the
+ * honest way to make that visible instead of quietly showing one number. */
+function boardLine(repo) {
+  try {
+    const S = standings(repo);
+    const h = S.sides.human, c = S.sides.claude;
+    let url = null;
+    try { url = fs.readFileSync(path.join(repo, ".claude", "scorecard.url"), "utf8").trim() || null; } catch {}
+    const parts = [];
+    parts.push(h.rounds ? `so far: ${h.label} avg ${h.avg}/100 over ${h.rounds}, L${h.level.n} ${h.level.name}, ${h.xp} XP, streak ${h.streak}d`
+                        : "so far: nothing graded on the human side yet");
+    parts.push(c.rounds ? `Claude avg ${c.avg}/100 over ${c.rounds}` : "Claude UNGRADED (the critic has never run here)");
+    /* THE ASYMMETRY, MEASURED RATHER THAN FELT. The mentor grades every ask; the critic grades
+       only when it is invoked. So the human side fills up while Claude's goes stale, and the board
+       slowly becomes what this kit exists to prevent — a scoreboard measuring one operator. The
+       gap is a number, so it is reported as one instead of left to be noticed. */
+    const behind = h.rounds - c.rounds;
+    if (behind >= 2) parts.push(`Claude is ${behind} rounds behind: the critic has not judged the last ${behind} pieces of work. Say so in the note and offer /critic on the most recent substantive one.`);
+    if (url) parts.push(`board: ${url}`);
+    return parts;
+  } catch { return []; }
+}
+
+const NOTE_FORMAT = [
+  "END the Mentor note with ONE line, exactly this shape, after you have written the grade:",
+  "",
+  "  **Ask N/100** · framing N · leverage N · learnings N · L<k> <Level>, <xp> XP · Claude <M>/100 · [board](<url>)",
+  "",
+  "Take N and the level from what score.mjs printed — do not recompute them. Use the board URL",
+  "below if one is given; omit the [board](...) segment entirely if none is. If Claude's side has",
+  "no grade, write `Claude ungraded` rather than a number: never invent one, and never reuse the",
+  "human score for it. One line, at the end of the note, not a table.",
+];
 
 const BEATS = [
   "1. One line restating what you understood them to be asking.",
@@ -140,7 +190,11 @@ if (FIRST_TURN) {
     "If it is a work request, OPEN your reply with a Mentor note — 2-4 lines, BEFORE any tool",
     "call and before any work. Going straight to a tool call IS the failure this hook exists for.",
     "", ...BEATS, "", ...GRADE, "",
-    "One coaching beat. Coach the FRAMING, not the taste. Never a lecture, never a list of tips."];
+    "One coaching beat. Coach the FRAMING, not the taste. Never a lecture, never a list of tips.",
+    "", ...NOTE_FORMAT];
+
+  const bl = boardLine(repo());
+  if (bl.length) lines.push("", ...bl.map(x => "  " + x));
 
   if (!resolveOperator().name) lines.push(...askWhoBlock());
 

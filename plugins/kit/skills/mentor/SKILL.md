@@ -68,6 +68,27 @@ node "$BIN/score.mjs" mentor \
   --note="<one line: the single thing that would most raise the next score>"
 ```
 
+### Then show the score in the reply
+
+**End the Mentor note with one line**, after the grade is written:
+
+```
+**Ask 87/100** · framing 82 · leverage 92 · learnings 88 · L2 Scope Setter, 27 XP · Claude 72/100 · [board](https://claude.ai/artifact/...)
+```
+
+Take the numbers from what `score.mjs` printed — never recompute them. The board URL comes from
+`.claude/scorecard.url`; omit that segment when there is none. **If the critic has never graded
+this repo, write `Claude ungraded` rather than a number** — never invent one, and never reuse the
+human's score for it.
+
+**A grade written only to a file is a grade nobody reads.** The whole point of scoring the ask is
+that it lands where the coaching lands.
+
+**When Claude's side is two or more rounds behind**, say so in one clause and offer `/critic` on the
+most recent substantive piece of work. The mentor grades every ask; the critic grades only when
+invoked, so without that nudge the board drifts into measuring one operator — which is the exact
+thing this kit exists to prevent.
+
 It prints a **round id**. Hold onto it — the critic needs it to attach the delivery grade to this
 same ask, and an unattached grade can never be read against the words that produced it.
 

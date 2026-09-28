@@ -16,7 +16,7 @@ implementation's paths so another repo can copy what it needs.
 | **ONEHELM** | "ONE HELM: what?" — before any code: the fact in the product's words, how many places decide it now and after (numbers), and the check that goes red if a second appears; or say `THIS IS A PATCH`. | **kit skill** `onehelm` · PP: `.claude/hooks/onehelm-or-say-patch.cjs` (refuses a commit without it), `scripts/qa/onehelm_rides_the_commit_check.mjs` |
 | **SEATRIAL** | Sail the whole product end to end before it ships: ten real voyages (solo/pass-and-play/crew × phone/tablet/desktop × Chromium/WebKit) with a real mouse, structural checks on every screen and a picture judge; the push to the integration branch is refused unless the trial of that exact tree passed (or an override with a written reason). | PP: `scripts/sea_trial.mjs`, `scripts/qa/push_gate.mjs`, `docs/QA-PROCESS.md` |
 | **summary** | 100 words of what changed since the last handoff and what is still waiting on the operator, every blocker with a tappable link. | PP: `.claude/skills/summary/`, `.claude/hooks/summary-means-this.sh` |
-| **`bug:`** at the start of a message | Check it is not already ruled or fixed; if not, add it to the backlog; then triage it with the rest of the work to fix it (his definition, 2026-09-28). | **kit skill** `bug` · PP: `.claude/CLAUDE.md`, `scripts/backlog.mjs` |
+| **`bug:`** at the start of a message | Check it is not already ruled or fixed; if not, add it to the backlog; then triage it — fix it right away when nothing else is under way, otherwise add it to the stream that works that part. Never left languishing, never shoving better work aside (his definition, 2026-09-28). | **kit skill** `bug` · PP: `.claude/CLAUDE.md`, `scripts/backlog.mjs` |
 
 ## The kit's skills
 
@@ -28,7 +28,7 @@ implementation's paths so another repo can copy what it needs.
 | **`cloudfleet`** | The CLOUDFLEET process above, repo-agnostic, with the shared rules every stream gets. |
 | **`onehelm`** | The ONEHELM three answers, and how to make them a commit hook. |
 | **`backlog`** | The ticket pipeline, with a repo-agnostic tool: `bin/backlog.mjs` (ids, `Closes:` trailers, the sweep, `--check`). |
-| **`bug`** | `bug:` → check ruled / already fixed → file it in their words → triage it with the rest of the work. |
+| **`bug`** | `bug:` → check ruled / already fixed → file it in their words → fix now if nothing else is under way, else into the right stream. |
 | **`updates`** | The operator's page for judging a build — Pass / Problem and a note per card, picks for their decisions, answers saved for the session; built by `bin/updates.mjs`. |
 
 ## Working agreements — how the work is run (reference: PP `.claude/CLAUDE.md`)

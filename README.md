@@ -8,6 +8,11 @@ asking, and by giving them an easy way to have Claude critique its own work.
 | **`mentor`** | coaches how the request was framed, then **grades the ask** out of 100 | before the work executes |
 | **`critic`** | a *fresh* agent judges the work: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It writes a **verdict** and a **hard won lesson**, not a score | after the work executes |
 | **`scorecard`** | publishes the ask scores as a board — XP, levels, streaks, badges | on demand |
+| **`cloudfleet`** | **CLOUDFLEET** — the operator's one word for *"you are the coordinator"*: triage the whole backlog, split it into as many parallel streams as can run without editing the same function, one cloud session per stream, then merge, test and ship what comes back | when they type CLOUDFLEET |
+| **`onehelm`** | **ONEHELM** — *"ONE HELM: what?"*: before a fix, the fact in the product's words, how many places decide it before and after, and the check that goes red on a second — or an honest `THIS IS A PATCH` | when they type ONEHELM, or before any root fix |
+
+**Every process word — CLOUDFLEET, ONEHELM, SEATRIAL, the backlog pipeline and the rest — is indexed in
+[`PROCESSES.md`](PROCESSES.md), with where each one lives.**
 
 Everything ships as **one plugin** (`plugins/kit/`) — a plugin can carry the two mentor hooks and
 the engines with it; a bare skill cannot.

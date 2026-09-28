@@ -1,14 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-kit",
-  "description": "A personal Claude Code kit \u2014 a mentor that coaches and grades how you ask, and a critic that judges and grades what came back.",
+  "description": "A personal Claude Code kit — a mentor that coaches and grades how you ask, and a critic that judges and grades what came back.",
   "owner": {
     "name": "claude-kit"
   },
   "plugins": [
     {
       "name": "kit",
-      "description": "A suite that makes working with Claude Code more effective, by training the person asking. The mentor coaches how each request was framed before the work runs, then grades the ask out of 100 \u2014 framing, leverage, learnings applied. The critic, in fresh context, judges the work itself: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope \u2014 and it writes a VERDICT, not a score. The scorecard publishes the ask scores as a board with XP, levels, streaks and badges. Skills register as critic, mentor and scorecard; repo specifics live in .claude/KIT.md, and anything missing is named out loud rather than silently skipped.",
+      "description": "A suite that makes working with Claude Code more effective, by training the person asking. The mentor coaches how each request was framed before the work runs, then grades the ask out of 100 — framing, leverage, learnings applied. The critic, in fresh context, judges the work itself: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope — and it writes a VERDICT, not a score. The scorecard publishes the ask scores as a board with XP, levels, streaks and badges. Skills register as critic, mentor, scorecard, cloudfleet (CLOUDFLEET: coordinate parallel cloud sessions over a backlog) and onehelm (ONEHELM: one place decides, proved by a number); repo specifics live in .claude/KIT.md, and anything missing is named out loud rather than silently skipped.",
       "category": "workflow",
       "source": "./plugins/kit"
     }

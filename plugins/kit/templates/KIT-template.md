@@ -23,6 +23,10 @@ Format is `- **key:** value`. Lines inside code fences are ignored, so examples 
 - **verdicts:** .claude/CRITIC-REVIEWS.md
 - **scorecard:** .claude/scorecard.jsonl
 - **never-touch:** CNAME, robots.txt, sitemap.xml
+- **integration-branch:** dev
+- **trial-command:** <optional: the slow end-to-end run the integrated build must pass before it ships>
+- **backlog:** <where tickets live, and the tool that issues ids / closes them>
+- **fleet-record:** .planning/FLEET-<date>.md
 
 ## What each one is for
 
@@ -37,6 +41,10 @@ Format is `- **key:** value`. Lines inside code fences are ignored, so examples 
 | `verdicts` | the standing record of past critic verdicts — **this is what makes a RECURRING fault visible** |
 | `scorecard` | the append-only grade ledger the mentor and the critic both write to, and the only thing the dashboard reads |
 | `never-touch` | files nothing here may modify, whatever the reason |
+| `integration-branch` | CLOUDFLEET: the branch every stream is cut from and the coordinator merges back into |
+| `trial-command` | CLOUDFLEET: the long end-to-end run the coordinator sails on the integrated build before it ships (optional) |
+| `backlog` | CLOUDFLEET: where the tickets live and how one is issued an id and closed |
+| `fleet-record` | CLOUDFLEET: where each round's streams, sessions, branches and seams are written down |
 
 ## The questions to ask if this file is missing
 

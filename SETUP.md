@@ -15,7 +15,7 @@
    /plugin marketplace add ~/Projects/claude-kit
    /plugin install kit@claude-kit
    ```
-   That carries the `mentor`, `critic` and `scorecard` skills, the engines, **and the two mentor
+   That carries the `mentor`, `critic`, `scorecard`, `cloudfleet` and `onehelm` skills, the engines, **and the two mentor
    hooks**. Nothing goes into `settings.json` by hand any more.
 
 3. **Restart Claude Code, then verify in any project:**

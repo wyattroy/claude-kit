@@ -38,6 +38,17 @@
    the board, and save the URL it returns — `.claude/scorecard.url` is what makes the next publish
    update that same board rather than make a second one.
 
+## Updating — after a pull adds or changes skills
+
+Inside any Claude Code session on the machine (the terminal CLI or the desktop app), three commands, in order:
+```
+/plugin marketplace update claude-kit
+/plugin update kit@claude-kit
+/reload-plugins
+```
+The first refreshes the catalogue, the second updates the installed plugin to it, the third loads the new skills into
+the running session — no restart. From a shell instead: `claude plugin marketplace update claude-kit`.
+
 ## Known limits
 
 - **Cloud sessions (claude.ai/code) see none of `~/.claude`**, so the plugin does not reach them.

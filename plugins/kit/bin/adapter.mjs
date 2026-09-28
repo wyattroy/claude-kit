@@ -65,9 +65,21 @@ export const KEYS = {
   "lessons":             { need: false, what: "Hard Won Lessons — what the critic teaches Claude, read back at the start of every session" },
   "scorecard":           { need: false, what: "the append-only grade ledger the mentor and critic both write to" },
   "never-touch":         { need: false, what: "files nothing here may modify, whatever the reason" },
+  "backlog":             { need: false, what: "the open tickets — one `# ` heading per ticket (backlog / bug skills)" },
+  "backlog-closed":      { need: false, what: "the graveyard: closed tickets and the commit that closed each" },
+  "ticket-prefix":       { need: false, what: "the letters before a ticket's number, e.g. PP in PP-037" },
+  "integration-branch":  { need: false, what: "the branch work is cut from and merged back into (cloudfleet)" },
+  "trial-command":       { need: false, what: "the slow end-to-end run an integrated build must pass (cloudfleet)" },
+  "fleet-record":        { need: false, what: "where each CLOUDFLEET round is written down" },
+  "updates-dir":         { need: false, what: "where the updates skill writes its pages before publishing" },
 };
 
 const DEFAULTS = {
+  backlog:          ".planning/BACKLOG.md",
+  "backlog-closed": ".planning/BACKLOG-CLOSED.md",
+  "ticket-prefix":  "T",
+  "fleet-record":   ".planning/FLEET-<date>.md",
+  "updates-dir":    ".planning/updates",
   verdicts:  ".claude/CRITIC-REVIEWS.md",
   lessons:   ".claude/HARD-WON-LESSONS.md",
   scorecard: ".claude/scorecard.jsonl",

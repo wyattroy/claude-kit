@@ -1,7 +1,7 @@
 {
   "name": "kit",
-  "version": "3.1.0",
-  "description": "A Claude Code kit that trains the person asking. The MENTOR coaches how each request was framed before the work runs, then grades the ask out of 100 — framing, leverage, and learnings applied — into an append-only ledger per repo. The CRITIC judges the work in fresh context and its own words: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It records a VERDICT rather than a score, and every future critic is handed the last one so a recurring fault gets named. The SCORECARD renders the ledger as a published board with XP, levels, streaks and badges. Two process skills travel with it: CLOUDFLEET (the coordinator splits the backlog across parallel cloud sessions and integrates what comes back) and ONEHELM (a root fix owes three answers — the fact, how many places decide it before and after, and the check that goes red on a second — or it says THIS IS A PATCH). Every process word is indexed in PROCESSES.md.",
+  "version": "3.2.0",
+  "description": "A Claude Code kit that trains the person asking. The MENTOR coaches how each request was framed before the work runs, then grades the ask out of 100 — framing, leverage, and learnings applied — into an append-only ledger per repo. The CRITIC judges the work in fresh context and its own words: did the thing you ASKED for actually happen, was each claim backed by a check that could have failed, did it stay in scope. It records a VERDICT rather than a score, and every future critic is handed the last one so a recurring fault gets named. The SCORECARD renders the ledger as a published board with XP, levels, streaks and badges. Two process skills travel with it: CLOUDFLEET (the coordinator splits the backlog across parallel cloud sessions and integrates what comes back) and ONEHELM (a root fix owes three answers — the fact, how many places decide it before and after, and the check that goes red on a second — or it says THIS IS A PATCH). Every process word is indexed in PROCESSES.md. And three for the work itself: BACKLOG (ids in, a fix closes its ticket in its own commit, closed tickets swept out — bin/backlog.mjs), BUG (`bug:` = file it in their words, then fix it) and UPDATES (the page the operator judges each build on — bin/updates.mjs).",
   "keywords": [
     "mentor",
     "coaching",
@@ -14,6 +14,10 @@
     "onehelm",
     "parallel",
     "coordination",
-    "cloud-sessions"
+    "cloud-sessions",
+    "backlog",
+    "bug",
+    "updates",
+    "checklist"
   ]
 }

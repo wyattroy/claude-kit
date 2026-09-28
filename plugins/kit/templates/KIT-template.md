@@ -25,7 +25,10 @@ Format is `- **key:** value`. Lines inside code fences are ignored, so examples 
 - **never-touch:** CNAME, robots.txt, sitemap.xml
 - **integration-branch:** dev
 - **trial-command:** <optional: the slow end-to-end run the integrated build must pass before it ships>
-- **backlog:** <where tickets live, and the tool that issues ids / closes them>
+- **backlog:** .planning/BACKLOG.md
+- **backlog-closed:** .planning/BACKLOG-CLOSED.md
+- **ticket-prefix:** <the letters before a ticket number, e.g. PP>
+- **updates-dir:** .planning/updates
 - **fleet-record:** .planning/FLEET-<date>.md
 
 ## What each one is for
@@ -43,7 +46,9 @@ Format is `- **key:** value`. Lines inside code fences are ignored, so examples 
 | `never-touch` | files nothing here may modify, whatever the reason |
 | `integration-branch` | CLOUDFLEET: the branch every stream is cut from and the coordinator merges back into |
 | `trial-command` | CLOUDFLEET: the long end-to-end run the coordinator sails on the integrated build before it ships (optional) |
-| `backlog` | CLOUDFLEET: where the tickets live and how one is issued an id and closed |
+| `backlog` / `backlog-closed` | the open tickets and the graveyard (backlog, bug, cloudfleet) |
+| `ticket-prefix` | the letters before a ticket's number — `Closes: PP-037` closes PP-037 |
+| `updates-dir` | where the updates skill writes its pages before they are published |
 | `fleet-record` | CLOUDFLEET: where each round's streams, sessions, branches and seams are written down |
 
 ## The questions to ask if this file is missing

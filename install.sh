@@ -41,7 +41,7 @@ if [ "$CMD" = "vendor" ] || [ "$CMD" = "check" ]; then
     # The playbook travels with the kit: it is what the coaching is grounded in, and playbook.mjs
     # resolves it relative to bin/. Vendored without it, every session reports the playbook missing.
     echo "$SRC/PLAYBOOK.md|$DST/PLAYBOOK.md"
-    for s in critic mentor scorecard cloudfleet onehelm; do echo "$SRC/skills/$s/SKILL.md|$REPO/.claude/skills/$s/SKILL.md"; done
+    for s in critic mentor scorecard cloudfleet onehelm backlog bug updates; do echo "$SRC/skills/$s/SKILL.md|$REPO/.claude/skills/$s/SKILL.md"; done
   }
 
   if [ "$CMD" = "check" ]; then

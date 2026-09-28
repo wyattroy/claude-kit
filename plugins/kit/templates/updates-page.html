@@ -1,0 +1,50 @@
+<title>%%TITLE%%</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#eef3f2;--card:#fffdf8;--ink:#1f2d2c;--mute:#5a6b69;--line:#d5dedb;--acc:#1f6f6b;--ok:#2e7d4f;--bad:#b3412f;--hi:#e6f2f0;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1716;--card:#18221f;--ink:#e6eeec;--mute:#9db0ac;--line:#2b3a37;--acc:#5cc2b9;--ok:#6fcf97;--bad:#f08a78;--hi:#173331;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1716;--card:#18221f;--ink:#e6eeec;--mute:#9db0ac;--line:#2b3a37;--acc:#5cc2b9;--ok:#6fcf97;--bad:#f08a78;--hi:#173331;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif;padding-inline:16px;padding-block:20px 80px}
+main{max-width:820px;margin:0 auto;display:grid;gap:28px}
+h1{font-size:28px;margin:0;text-wrap:balance} h2{font-size:21px;margin:0 0 4px;text-wrap:balance} h3{font-size:16px;margin:0}
+.lede{color:var(--mute);margin:0 0 12px} .lede a{color:var(--acc)}
+nav{display:flex;flex-wrap:wrap;gap:8px} nav a{color:var(--acc);font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--card)}
+section{display:grid;gap:12px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:8px}
+.item.q{border-left:4px solid var(--acc)}
+.item[data-state="pass"]{border-color:var(--ok)} .item[data-state="problem"]{border-color:var(--bad)}
+.item p{margin:0} .now span,.pr span{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-right:6px}
+.pr span{color:var(--acc)} .also{font-size:13px;color:var(--mute)} .tag{font-size:12px;font-weight:600;color:var(--bad);border:1px solid currentColor;border-radius:6px;padding:0 6px;margin-left:6px}
+code{font-size:13px;background:var(--hi);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere} small{color:var(--mute);font-weight:400}
+.figs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px} figure{margin:0;flex:0 0 auto;max-width:300px} figure img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+figcaption{font-size:12px;color:var(--mute);margin-top:4px}
+.vd,.opts{display:flex;gap:8px;flex-wrap:wrap}
+button{font:600 15px Figtree,system-ui,sans-serif;padding:8px 16px;border-radius:9px;border:2px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.pass.on{background:var(--ok);border-color:var(--ok);color:var(--card)} .prob.on{background:var(--bad);border-color:var(--bad);color:var(--card)} .opt.on{background:var(--acc);border-color:var(--acc);color:var(--card)}
+textarea{width:100%;box-sizing:border-box;min-height:52px;font:15px Figtree,system-ui,sans-serif;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.keep{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+#bar{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line);display:flex;gap:12px;align-items:center;justify-content:center}
+#bar button{background:var(--acc);border-color:var(--acc);color:var(--card)} #st{font-size:14px;color:var(--mute)}
+#out{position:absolute;left:-9999px}
+</style>
+<main>
+<h1>%%HEADING%%</h1>
+<p class="lede">%%INTRO%%</p>
+<nav>%%NAV%%</nav>
+%%BODY%%
+</main>
+<div id="bar"><button type="button" id="copy">Copy my notes</button><span id="st"></span></div>
+<textarea id="out" readonly aria-hidden="true"></textarea>
+<script>
+
+const KEY=__KEY__;let st={};try{st=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+const $=s=>[...document.querySelectorAll(s)],stEl=document.getElementById("st");let doc=null,tm=0;
+function get(id){return st[id]||(st[id]={})}
+function paint(){$(".item").forEach(it=>{const s=st[it.dataset.id]||{};it.dataset.state=s.v||"";it.querySelectorAll("[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===s.v));it.querySelectorAll("[data-o]").forEach(b=>b.classList.toggle("on",b.dataset.o===s.o));const t=it.querySelector("textarea");if(t&&document.activeElement!==t)t.value=s.t||""})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}clearTimeout(tm);tm=setTimeout(async()=>{if(!doc){stEl.textContent="Saved on this device";return}try{await doc.set({notes:st,at:new Date().toISOString()});stEl.textContent="Saved — Claude can read it"}catch(e){stEl.textContent="Saved on this device only"}},500)}
+$(".item").forEach(it=>{const id=it.dataset.id;it.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{const s=get(id);s.v=s.v===b.dataset.v?"":b.dataset.v;paint();save()});it.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{const s=get(id);s.o=s.o===b.dataset.o?"":b.dataset.o;paint();save()});const t=it.querySelector("textarea");if(t)t.oninput=()=>{get(id).t=t.value;save()}});
+paint();
+function notes(){const ans=[],ver=[];$(".item").forEach(it=>{const s=st[it.dataset.id];if(!s)return;const h=(it.querySelector("h3")||{}).textContent||it.dataset.id;if(it.classList.contains("q")){if(s.o||s.t)ans.push("- "+it.dataset.id+": "+[s.o,s.t].filter(Boolean).join(" — "))}else if(s.v||s.t)ver.push("- "+it.dataset.id+": "+(s.v?s.v.toUpperCase():"note")+(s.t?" — "+s.t:""))});return "ANSWERS\n"+(ans.join("\n")||"(none)")+"\n\nVERDICTS\n"+(ver.join("\n")||"(none)")}
+document.getElementById("copy").onclick=()=>{const text=notes(),o=document.getElementById("out");const byHand=()=>{o.value=text;o.select();let ok=false;try{ok=document.execCommand("copy")}catch(e){ok=false}stEl.textContent=ok?"Copied":"Couldn't copy — select the notes by hand"};try{navigator.clipboard.writeText(text).then(()=>{stEl.textContent="Copied"},byHand)}catch(e){byHand()}};
+(async()=>{try{const db=await claude.use("db");if(!db)return;doc=db.doc(__DOC__);const d=await doc.get();if(d&&d.notes&&!Object.keys(st).length){st=d.notes;paint()}}catch(e){}})();
+</script>

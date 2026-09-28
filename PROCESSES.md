@@ -16,7 +16,7 @@ implementation's paths so another repo can copy what it needs.
 | **ONEHELM** | "ONE HELM: what?" — before any code: the fact in the product's words, how many places decide it now and after (numbers), and the check that goes red if a second appears; or say `THIS IS A PATCH`. | **kit skill** `onehelm` · PP: `.claude/hooks/onehelm-or-say-patch.cjs` (refuses a commit without it), `scripts/qa/onehelm_rides_the_commit_check.mjs` |
 | **SEATRIAL** | Sail the whole product end to end before it ships: ten real voyages (solo/pass-and-play/crew × phone/tablet/desktop × Chromium/WebKit) with a real mouse, structural checks on every screen and a picture judge; the push to the integration branch is refused unless the trial of that exact tree passed (or an override with a written reason). | PP: `scripts/sea_trial.mjs`, `scripts/qa/push_gate.mjs`, `docs/QA-PROCESS.md` |
 | **summary** | 100 words of what changed since the last handoff and what is still waiting on the operator, every blocker with a tappable link. | PP: `.claude/skills/summary/`, `.claude/hooks/summary-means-this.sh` |
-| **`bug:`** at the start of a message | "File this in the backlog" — issue it an id, then fix it. | PP: `.claude/CLAUDE.md`, `scripts/backlog.mjs` |
+| **`bug:`** at the start of a message | "File this in the backlog" — check it is not ruled or fixed, issue it an id, then fix it. | **kit skill** `bug` · PP: `.claude/CLAUDE.md`, `scripts/backlog.mjs` |
 
 ## The kit's skills
 
@@ -27,12 +27,15 @@ implementation's paths so another repo can copy what it needs.
 | **`scorecard`** | Publishes the ask grades as a board — XP, levels, streaks, badges. |
 | **`cloudfleet`** | The CLOUDFLEET process above, repo-agnostic, with the shared rules every stream gets. |
 | **`onehelm`** | The ONEHELM three answers, and how to make them a commit hook. |
+| **`backlog`** | The ticket pipeline, with a repo-agnostic tool: `bin/backlog.mjs` (ids, `Closes:` trailers, the sweep, `--check`). |
+| **`bug`** | `bug:` → file it in their words (after checking it is not ruled or already fixed), then fix it. |
+| **`updates`** | The operator's page for judging a build — Pass / Problem and a note per card, picks for their decisions, answers saved for the session; built by `bin/updates.mjs`. |
 
 ## Working agreements — how the work is run (reference: PP `.claude/CLAUDE.md`)
 
 | agreement | the rule, in one line | made structural by (PP) |
 |---|---|---|
-| **The backlog pipeline** | Tickets get ids from one tool; **a fix closes its ticket in its own commit** (`Closes: PP-037` on its own line); a sweep moves closed tickets to a graveyard file with the commit that closed them; a gate fails if a closed ticket is still listed. "A mention is not a close." | `scripts/backlog.mjs` (`--check` in the gates), `.planning/BACKLOG.md`, `.planning/BACKLOG-CLOSED.md` |
+| **The backlog pipeline** (kit skill `backlog`) | Tickets get ids from one tool; **a fix closes its ticket in its own commit** (`Closes: PP-037` on its own line); a sweep moves closed tickets to a graveyard file with the commit that closed them; a gate fails if a closed ticket is still listed. "A mention is not a close." | `scripts/backlog.mjs` (`--check` in the gates), `.planning/BACKLOG.md`, `.planning/BACKLOG-CLOSED.md` |
 | **Search the rulings before diagnosing** | A thing that looks broken has usually been ruled on. Grep the decisions and intended-behaviour files first. | `.claude/hooks/ruled-already.cjs`, `rulings-at-start.cjs`, `.claude/memory/DECISIONS.md`, `docs/INTENDED-BEHAVIOUR.md` |
 | **Find out whether it is already fixed** | A fixed bug leaves no ruling, it leaves a commit: `git log --all --since=… -i --grep=…` before spending anything. Say the date you checked back to. | `.claude/hooks/already-fixed.cjs` |
 | **Work nobody merged is work the product does not have** | At session start, list the unmerged branches touched recently. | `.claude/hooks/unmerged-work-at-start.mjs` |
@@ -42,7 +45,7 @@ implementation's paths so another repo can copy what it needs.
 | **Play the real product; never pose a visual** | Serve it, reach the moment, photograph that — a mock recreates what you already believe. Compare host and guest in multiplayer. | `.claude/CLAUDE.md`, `docs/DRIVING-THE-GAME.md` |
 | **Measure before calling a fault** | "Observed once, not yet measured" until it is. A comment is not a measurement. When a check condemns something known to work, suspect the check. | `docs/QA-PROCESS.md` |
 | **Read the subsystem's doc first** | A table maps each area to the doc to read before touching it. | `.claude/hooks/read-the-doc-first.cjs`, the table in `.claude/CLAUDE.md` |
-| **Pages for the operator, not files** | Anything they read, tick or decide is a published page with a tappable link: Pass/Problem per item, a comment box per card, answers saved where the session can read them, and the same sheet re-used. | `docs/ARTIFACT-GUIDELINES.md`, `scripts/qa/artifact_guidelines_check.mjs` |
+| **Pages for the operator, not files** (kit skill `updates`) | Anything they read, tick or decide is a published page with a tappable link: Pass/Problem per item, a comment box per card, answers saved where the session can read them, and the same sheet re-used. | `docs/ARTIFACT-GUIDELINES.md`, `scripts/qa/artifact_guidelines_check.mjs` |
 | **Pick pages and show branches** | Decisions are shown, not described: real photographs of each option on a pick page; exploratory builds on `*-show` branches that never merge. | PP `.planning/FLEET-2026-09-27.md` rounds four and five |
 | **A checklist for every build on staging** | After the game changes, the operator gets a checklist for exactly that build (its stamp named). | `.claude/hooks/playtest-checklist-last.cjs` |
 | **The integration branch is the source of truth** | Short branches off it, pushed on their first commit, merged back rebased as soon as they work; production merges only on the operator's word. | PP `docs/GIT-AND-DEPLOY.md` |
@@ -54,7 +57,7 @@ implementation's paths so another repo can copy what it needs.
 
 ## Adopting these in another repo
 
-1. Install the kit (`SETUP.md`) — that brings `mentor`, `critic`, `scorecard`, `cloudfleet` and `onehelm`.
+1. Install the kit (`SETUP.md`) — that brings `mentor`, `critic`, `scorecard`, `cloudfleet`, `onehelm`, `backlog`, `bug` and `updates`.
 2. Give the repo its adapter, `.claude/KIT.md` (template: `plugins/kit/templates/KIT-template.md`) — the CLOUDFLEET keys
    are `integration-branch`, `test-command`, `trial-command`, `backlog`, `fleet-record`.
 3. Copy the hooks you want from the reference paths above; each file's header says why it exists and what it refuses.

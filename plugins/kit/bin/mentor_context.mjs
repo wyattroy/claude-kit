@@ -161,7 +161,29 @@ const GRADE = [
   "attaches the delivery grade to it. Full rubric: the `mentor` skill.",
 ];
 
+/* ONCE PER SESSION, NOT ON EVERY MESSAGE (Wyatt, 2026-09-29, a usage audit: this block was ~1K
+   tokens added to every prompt, and every later reply re-reads all of them). The note and the grade
+   ride the FIRST prompt of a session, and any prompt that says "mentor". Every other prompt gets
+   nothing, and the ungraded-turn counter only watches the prompts that were asked to grade. */
+function mentoredThisPrompt() {
+  let hook = {};
+  try { hook = JSON.parse(fs.readFileSync(0, "utf8") || "{}"); } catch { /* no stdin: behave as before */ }
+  if (/\bmentor\b/i.test(hook.prompt || "")) return true;
+  const id = hook.session_id;
+  if (!id) return true;
+  const file = path.join(repo(), ".claude", ".mentor-sessions");
+  let seen = [];
+  try { seen = fs.readFileSync(file, "utf8").split("\n").filter(Boolean); } catch { /* first ever */ }
+  if (seen.includes(id)) return false;
+  try { fs.writeFileSync(file, [...seen.slice(-50), id].join("\n") + "\n"); } catch { /* costs the once-only, not the session */ }
+  return true;
+}
+
 let lines;
+if (!FIRST_TURN && !mentoredThisPrompt()) {
+  process.stdout.write("{}");
+  process.exit(0);
+}
 if (FIRST_TURN) {
   lines = [
     "## mentor — FIRST TURN OF THIS SESSION",
@@ -219,20 +241,8 @@ if (FIRST_TURN) {
 
   if (!resolveOperator().name) lines.push(...askWhoBlock());
 
-  /* THE CRITIC'S HALF OF THE TEACHING. The mentor coaches a person who remembers between sessions;
-     the critic's findings land on a model that does not. Reading them back here is the only thing
-     that turns a verdict into a lesson rather than an accusation repeated every few reviews. */
-  try {
-    const lb = lessonsBlock(repo());
-    if (lb) lines.push("", ...lb.lines);
-  } catch { /* an unreadable lessons file costs the lessons, not the session */ }
-
-  /* AND THE PLAYBOOK'S AGE, measured rather than eyeballed. This used to be a sentence asking the
-     model to notice a date; a model that skips the note skips the noticing. */
-  try {
-    const rb = refreshBlock();
-    if (rb) lines.push(...rb);
-  } catch { /* if the playbook cannot be read, say nothing rather than demand a refresh of nothing */ }
+  /* The full lessons and the playbook's age went in at SessionStart. Repeating them here re-said
+     what was already in context; the pointer above is enough. */
 
   if (w.missed) {
     lines.push("",
